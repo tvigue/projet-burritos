@@ -27,6 +27,10 @@ public:
 	void SynchGetString(char *s, int n);
 	// Unix fgets(3S)
 	
+	void SynchPutInt(int n);
+	
+	void SynchGetInt(int *n);
+	
 	void copyStringFromMachine(int from, char *to, unsigned size);
 	
 	void copyStringToMachine(int from, char *to, unsigned size);
