@@ -95,7 +95,7 @@ ORIG_FLAVORS=threads userprog filesys network vm
 
 # Add here your personal flavors
 
-$(eval $(call define-flavor,step2,userprog,synconsole.cc))
+$(eval $(call define-flavor,step2,userprog,synchconsole.cc))
 
 
 
