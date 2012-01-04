@@ -60,6 +60,18 @@ void SynchConsole::SynchGetString(char *s, int n) {
 	s[i] = '\0';
 }
 
+void SynchConsole::SynchPutInt(int n){
+	char* buf =  new char[5];
+	snprintf(buf,MAX_STRING_SIZE,"%i",n);
+	SynchPutString(buf);
+}
+
+void SynchConsole::SynchGetInt(int *n){
+	char *buf = new char[MAX_STRING_SIZE];
+	sscanf(buf,"%u",n);
+	SynchGetString(buf,3);
+}
+
 void SynchConsole::copyStringFromMachine(int from, char *to, unsigned size){
 	int value;
 	unsigned i = 0;
