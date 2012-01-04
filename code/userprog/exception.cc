@@ -82,6 +82,7 @@ void ExceptionHandler(ExceptionType which) {
     int adr = 0;
     int codeExit;
     char buf[MAX_STRING_SIZE];
+    char ch;
     
     if(which == SyscallException){
     	switch(type){
@@ -102,6 +103,12 @@ void ExceptionHandler(ExceptionType which) {
 		  		synchconsole->copyStringFromMachine(adr,buf,MAX_STRING_SIZE);
 		  		synchconsole->SynchPutString(buf);
 		  		break;
+	 		}
+	 		
+	 		case SC_GetChar:{
+				ch = synchconsole->SynchGetChar();
+				machine->WriteRegister(2,(int)ch);
+				break;
 	 		}
 	 		
 	 		case SC_Exit: {
