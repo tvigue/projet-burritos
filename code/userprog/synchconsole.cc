@@ -68,8 +68,8 @@ void SynchConsole::SynchPutInt(int n){
 
 void SynchConsole::SynchGetInt(int *n){
 	char *buf = new char[MAX_STRING_SIZE];
-	sscanf(buf,"%i",n);
 	SynchGetString(buf,strlen(buf));
+	sscanf(buf,"%i",n);
 }
 
 void SynchConsole::copyStringFromMachine(int from, char *to, unsigned size){
