@@ -80,6 +80,7 @@ void ExceptionHandler(ExceptionType which) {
       
     #else
     int adr = 0;
+    int codeExit;
     char buf[MAX_STRING_SIZE];
     
     if(which == SyscallException){
@@ -104,6 +105,7 @@ void ExceptionHandler(ExceptionType which) {
 	 		}
 	 		
 	 		case SC_Exit: {
+	 			codeExit  = machine->ReadRegister(4);
 				DEBUG('a', "Shutdown, initiated by user program.\n");
 				interrupt->Halt();
 				break;

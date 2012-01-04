@@ -5,5 +5,5 @@ int main(){
 	PutChar('\n');
 	PutString("voici une super phrase qui est superbement trop longue et va donc se faire couper par l'appel a copy string from machine hhihihihihihih");
 	PutChar('\n');
-	return 0;
+	Exit(12);
 }
