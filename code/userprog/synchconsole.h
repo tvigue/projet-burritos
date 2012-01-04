@@ -28,6 +28,8 @@ public:
 	// Unix fgets(3S)
 	
 	void copyStringFromMachine(int from, char *to, unsigned size);
+	
+	void copyStringToMachine(int from, char *to, unsigned size);
 
 private:
 	Console *console;
