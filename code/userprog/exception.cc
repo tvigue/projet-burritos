@@ -83,6 +83,7 @@ void ExceptionHandler(ExceptionType which) {
     int codeExit;
     char buf[MAX_STRING_SIZE];
     char ch;
+    int n = 0;
     
     if(which == SyscallException){
     	switch(type){
@@ -111,6 +112,15 @@ void ExceptionHandler(ExceptionType which) {
 				break;
 	 		}
 	 		
+	 		case SC_GetString:{
+				adr = machine->ReadRegister (4);
+				n = machine->ReadRegister (5);
+				synchconsole->SynchGetString(buf,n);
+				synchconsole->copyStringToMachine(adr,buf,n);
+				machine->WriteRegister(2,adr);
+				break;
+	 		}
+	 		
 	 		case SC_Exit: {
 	 			codeExit  = machine->ReadRegister(4);
 				DEBUG('a', "Shutdown, initiated by user program.\n");
@@ -123,10 +133,7 @@ void ExceptionHandler(ExceptionType which) {
 			  	ASSERT (FALSE);  		
 		  	}
 		}
-	  		
 	}
-	
-	//free(buf);
 	
     #endif
     // LB: Do not forget to increment the pc before returning!

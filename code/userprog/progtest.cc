@@ -91,7 +91,7 @@ ConsoleTest (char *in, char *out)
       {
 	  readAvail->P ();	// wait for character to arrive
 	  ch = console->GetChar ();
-	  if(ch == -1)
+	  if(ch == -1 || ch == EOF)
 	  	return;
 	  if(ch != 10){
 	  	console->PutChar ('<');
