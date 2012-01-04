@@ -1,10 +1,9 @@
 #include "syscall.h"
-
 int main(){
-	int *i = 0;
+	int i;
 	
-	GetInt(i);
-	PutInt(*i);
+	GetInt(&i);
+	PutInt(i);
 	PutChar('\n');
 	return 0;
 }

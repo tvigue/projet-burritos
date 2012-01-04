@@ -128,7 +128,7 @@ void ExceptionHandler(ExceptionType which) {
 	 		}
 	 		
 	 		case SC_GetInt:{
-				adr = machine->ReadRegister (4);
+				adr = machine->ReadRegister(4);
 				synchconsole->SynchGetInt(&entier);
 				printf("%i\n",entier);
 				machine->WriteMem(adr,1,entier);
