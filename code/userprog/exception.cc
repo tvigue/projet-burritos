@@ -25,6 +25,7 @@
 #include "system.h"
 #include "syscall.h"
 #include "synchconsole.h"
+#include "userthread.h"
 
 
 //----------------------------------------------------------------------
@@ -80,6 +81,7 @@ void ExceptionHandler(ExceptionType which) {
       
     #else
     int adr = 0;
+    int adr2 = 0;
     int codeExit;
     char buf[MAX_STRING_SIZE];
     char ch;
@@ -130,10 +132,21 @@ void ExceptionHandler(ExceptionType which) {
 	 		case SC_GetInt:{
 				adr = machine->ReadRegister(4);
 				synchconsole->SynchGetInt(&entier);
-				printf("%i\n",entier);
 				machine->WriteMem(adr,1,entier);
 				break;
 	 		}
+			
+			case SC_UserThreadCreate: {
+				adr = machine->ReadRegister(4);
+				adr2 = machine->ReadRegister(5);
+				//userthread->UserThreadCreate();
+				
+				break;
+			}
+			
+			case SC_UserThreadExit: {
+				break;
+			}
 	 		
 	 		case SC_Exit: {
 	 			codeExit  = machine->ReadRegister(4);
