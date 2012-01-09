@@ -7,10 +7,12 @@
 #include "addrspace.h"
 #include "system.h"
 
-static void StartUserThread(int f){
-	//int arg;
-	int i;
+int argument;
 
+static void StartUserThread(int f){
+	int i;
+	
+	printf("startUserTrhread\n");
 	// restore state
 	currentThread->space->RestoreState();
 
@@ -24,7 +26,7 @@ static void StartUserThread(int f){
 	// on modifie le Stack Pointer 
 	machine->WriteRegister (StackReg, 1024 -16 - (4*PageSize));
 	// on passe par le registre 4 pour empiler l'argument de f
-	//machine->WriteRegister (4,arg);
+	machine->WriteRegister (4,argument);
 	
 	machine->Run();
 }
@@ -36,9 +38,13 @@ int do_UserThreadCreate(int f, int arg) {
 	t = new Thread("thread user");
 	
 	// initialize
+	argument = arg;
 	t->Fork(StartUserThread,f);
-	
 	return 0;
+}
+
+void do_UserThreadExit() {
+	currentThread->Finish();
 }
 
 #endif //CHANGED

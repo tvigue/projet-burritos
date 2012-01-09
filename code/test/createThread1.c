@@ -1,15 +1,15 @@
 #include "syscall.h"
 
 void function (void * a){
-
-	PutString("Bonjour je suis roumain!!");
-
+	PutString("salut sa va");
+	PutChar('\n');
+	UserThreadExit();
 }
 
 int main(){
 
 	int arg=5;
 	UserThreadCreate(function,&arg);
-
+	for(;;);
 	return 1;
 }

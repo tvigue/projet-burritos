@@ -6,6 +6,7 @@
 #define STACK_PAGE_NUMBER 3
 
 	extern int do_UserThreadCreate(int f, int arg);
+	extern void do_UserThreadExit();
 
 #endif
 #endif //CHANGED
