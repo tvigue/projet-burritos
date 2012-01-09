@@ -15,14 +15,9 @@ int do_UserThreadCreate(int f, int arg) {
 	t = new Thread("thread user");
 	
 	// initialize
-/*	SPmain = machine->ReadRegister(StackReg);
-	t.stack = SPmain + STACK_PAGE_NUMBER * PageSize; 
-	t.stackTop = t.stack + STACK_PAGE_NUMBER * PageSize;
-	t.space = STACK_PAGE_NUMBER * PageSize;
-	t.status = READY;
+	t->setStatus(READY);
 	
 	t->Fork(f,arg);
-*/
 	
 	return 0;
 }
