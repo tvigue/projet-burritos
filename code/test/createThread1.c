@@ -1,6 +1,6 @@
 #include "syscall.h"
 
-void function (int a){
+void function (void * a){
 
 	PutString("Bonjour je suis roumain!!");
 
@@ -8,8 +8,8 @@ void function (int a){
 
 int main(){
 
+	int arg=5;
+	UserThreadCreate(function,&arg);
 
-	UserThreadCreate(function,5);
-
-
+	return 1;
 }
