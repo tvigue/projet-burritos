@@ -9,7 +9,7 @@ void function (int a){
 int main(){
 
 
-	do_UserThreadCreate(function,5);
+	UserThreadCreate(function,5);
 
 
 }
