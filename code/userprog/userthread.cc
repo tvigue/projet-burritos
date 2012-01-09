@@ -8,11 +8,11 @@
 #include "system.h"
 
 int argument;
+static int nbThread;
 
 static void StartUserThread(int f){
 	int i;
 	
-	printf("startUserTrhread\n");
 	// restore state
 	currentThread->space->RestoreState();
 
@@ -34,6 +34,7 @@ static void StartUserThread(int f){
 int do_UserThreadCreate(int f, int arg) {
 	Thread *t;
 	
+	nbThread ++;
 	// create thread	
 	t = new Thread("thread user");
 	
@@ -44,7 +45,18 @@ int do_UserThreadCreate(int f, int arg) {
 }
 
 void do_UserThreadExit() {
-	currentThread->Finish();
+	nbThread--;
+	delete(currentThread);
+}
+
+void initUserThread() {
+	nbThread = 0;
+}
+
+void do_WaitUserThread() {
+	while(nbThread>0){
+		currentThread->Yield();
+	}
 }
 
 #endif //CHANGED

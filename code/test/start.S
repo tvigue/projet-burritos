@@ -121,8 +121,17 @@ UserThreadExit:
 	j	$31
 	.end UserThreadExit
 
+	.globl WaitUserThread
+	.ent	WaitUserThread		
+
+WaitUserThread:
+	addiu $2,$0,SC_WaitUserThread
+	syscall
+	j	$31
+	.end WaitUserThread
+
 	.globl Exit
-	.ent	Exit		
+	.ent	Exit	
 
 #endif // CHANGED	
 	

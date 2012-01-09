@@ -10,6 +10,6 @@ int main(){
 
 	int arg=5;
 	UserThreadCreate(function,&arg);
-	for(;;);
-	return 1;
+	WaitUserThread();
+	Exit(0);
 }

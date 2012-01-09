@@ -16,6 +16,7 @@
 
 #ifdef CHANGED
 #include "synchconsole.h"
+#include "userthread.h"
 #endif
 
 //----------------------------------------------------------------------
@@ -29,6 +30,10 @@ StartProcess (char *filename)
 {
     OpenFile *executable = fileSystem->Open (filename);
     AddrSpace *space;
+    
+	#ifdef CHANGED
+	initUserThread();
+	#endif
 
     if (executable == NULL)
       {
