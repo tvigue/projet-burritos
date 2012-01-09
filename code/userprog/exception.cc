@@ -139,7 +139,7 @@ void ExceptionHandler(ExceptionType which) {
 			case SC_UserThreadCreate: {
 				adr = machine->ReadRegister(4);
 				adr2 = machine->ReadRegister(5);
-				//userthread->UserThreadCreate();
+				do_UserThreadCreate(adr,adr2);
 				
 				break;
 			}
