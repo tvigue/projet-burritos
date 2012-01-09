@@ -82,7 +82,7 @@ void ExceptionHandler(ExceptionType which) {
     #else
     int adr = 0;
     int adr2 = 0;
-    int codeExit;
+    //int codeExit;
     char buf[MAX_STRING_SIZE];
     char ch;
     int n = 0;
@@ -149,7 +149,7 @@ void ExceptionHandler(ExceptionType which) {
 			}
 	 		
 	 		case SC_Exit: {
-	 			codeExit  = machine->ReadRegister(4);
+	 			//codeExit  = machine->ReadRegister(4);
 				DEBUG('a', "Shutdown, initiated by user program.\n");
 				interrupt->Halt();
 				break;
