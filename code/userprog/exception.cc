@@ -145,6 +145,7 @@ void ExceptionHandler(ExceptionType which) {
 			}
 			
 			case SC_UserThreadExit: {
+				do_UserThreadExit();
 				break;
 			}
 	 		
