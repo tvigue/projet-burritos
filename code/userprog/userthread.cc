@@ -8,7 +8,7 @@
 #include "system.h"
 
 static void StartUserThread(int f){
-	int arg = machine->ReadRegister(5);
+	//int arg;
 	int i;
 
 	// restore state
@@ -24,7 +24,7 @@ static void StartUserThread(int f){
 	// on modifie le Stack Pointer 
 	machine->WriteRegister (StackReg, 1024 -16 - (4*PageSize));
 	// on passe par le registre 4 pour empiler l'argument de f
-	machine->WriteRegister (4,arg);
+	//machine->WriteRegister (4,arg);
 	
 	machine->Run();
 }
