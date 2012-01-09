@@ -39,6 +39,7 @@
 #define SC_GetInt    16
 #define SC_UserThreadCreate 17
 #define SC_UserThreadExit 18
+#define SC_WaitUserThread 19
 #endif // CHANGED
 
 #ifdef IN_USER_MODE
@@ -155,6 +156,8 @@ void GetInt(int* n);
 int UserThreadCreate(void f(void * arg), void * arg);
 
 void UserThreadExit();
+
+void WaitUserThread();
 
 #endif // CHANGED
 

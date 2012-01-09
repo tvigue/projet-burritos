@@ -148,6 +148,12 @@ void ExceptionHandler(ExceptionType which) {
 				do_UserThreadExit();
 				break;
 			}
+			
+			case SC_WaitUserThread: {
+				do_WaitUserThread();
+				break;
+			}
+			
 	 		
 	 		case SC_Exit: {
 	 			//codeExit  = machine->ReadRegister(4);
