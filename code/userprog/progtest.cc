@@ -30,10 +30,6 @@ StartProcess (char *filename)
 {
     OpenFile *executable = fileSystem->Open (filename);
     AddrSpace *space;
-    
-	#ifdef CHANGED
-	initUserThread();
-	#endif
 
     if (executable == NULL)
       {
@@ -44,9 +40,12 @@ StartProcess (char *filename)
     currentThread->space = space;
 
     delete executable;		// close file
-
     space->InitRegisters ();	// set the initial register values
     space->RestoreState ();	// load page table register
+
+	#ifdef CHANGED
+	initUserThread();
+	#endif
 
     machine->Run ();		// jump to the user progam
     ASSERT (FALSE);		// machine->Run never returns;
