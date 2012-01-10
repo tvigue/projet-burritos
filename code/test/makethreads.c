@@ -4,7 +4,6 @@ void function (void * a){
 	//int i;
 	//for(i=0;i<100;i++)
 	PutChar('T');
-	PutChar('D');
 	UserThreadExit();
 }
 
@@ -14,6 +13,7 @@ int main(){
 	UserThreadCreate(function,&arg);
 	//for(i=0;i<1000;i++)
 	PutChar('M');
-	//WaitUserThread();
+		PutChar('D');
+	WaitUserThread();
 	Halt();
 }
