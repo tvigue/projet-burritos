@@ -120,10 +120,9 @@ Lock::~Lock () {
 void Lock::Acquire () {
 	#ifdef CHANGED
 	IntStatus oldLevel = interrupt->SetLevel (IntOff);
-	
-	 while (value) {
+	 while (value) { 
 	 	queue->Append ((void *) currentThread);
-	  	currentThread->Sleep ();
+	  	currentThread->Sleep();
      }
      value = true;
      
@@ -133,13 +132,12 @@ void Lock::Acquire () {
 
 void Lock::Release () {
 	#ifdef CHANGED
-	Thread *thread;
     IntStatus oldLevel = interrupt->SetLevel (IntOff);
-
+	Thread *thread;
     thread = (Thread *) queue->Remove ();
     if (thread != NULL)		// make thread ready, consuming the V immediately
 		scheduler->ReadyToRun (thread);
-    	value = false;
+    value = false;
     (void) interrupt->SetLevel (oldLevel);
     #endif //CHANGED
 }

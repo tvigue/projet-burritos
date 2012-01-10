@@ -48,9 +48,9 @@ int do_UserThreadCreate(int f, int arg) {
 	// create thread	
 	t = new Thread("thread user");
 	
-	ofstream out("binary.txt",ios::binary);
-	out.write((char *)&arg,sizeof(arg));
-	out.close();
+	//ofstream out("binary.txt",ios::binary);
+	//out.write((char *)&arg,sizeof(arg));
+	//out.close();
 
 	// initialize
 	t->Fork(StartUserThread,f);

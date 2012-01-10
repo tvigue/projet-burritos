@@ -140,7 +140,6 @@ void ExceptionHandler(ExceptionType which) {
 				adr = machine->ReadRegister(4);
 				adr2 = machine->ReadRegister(5);
 				do_UserThreadCreate(adr,adr2);
-				
 				break;
 			}
 			
