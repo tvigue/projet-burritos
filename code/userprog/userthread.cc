@@ -6,13 +6,23 @@
 #include "userthread.h"
 #include "addrspace.h"
 #include "system.h"
+#include <fstream>
+#include <iostream>
+#include <string>
+using namespace std;
 
-int argument;
 static int nbThread;
 
 static void StartUserThread(int f){
 	int i;
+	int argument;
+
+	//Deserialization
+	ifstream in ("binary.txt",ios::binary);
+	in.read((char *)&argument,sizeof(argument));
+	in.close();
 	
+
 	// restore state
 	currentThread->space->RestoreState();
 
@@ -38,8 +48,11 @@ int do_UserThreadCreate(int f, int arg) {
 	// create thread	
 	t = new Thread("thread user");
 	
+	ofstream out("binary.txt",ios::binary);
+	out.write((char *)&arg,sizeof(arg));
+	out.close();
+
 	// initialize
-	argument = arg;
 	t->Fork(StartUserThread,f);
 	return 0;
 }
