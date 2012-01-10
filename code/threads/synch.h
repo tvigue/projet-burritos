@@ -87,6 +87,11 @@ class Lock
 
   private:
     const char *name;		// for debugging
+    #ifdef CHANGED
+    bool value;
+    List *queue;
+    #endif //CHANGED
+     
     // plus some other stuff you'll need to define
 };
 
