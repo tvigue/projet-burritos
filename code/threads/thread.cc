@@ -91,6 +91,7 @@ Thread::Fork (VoidFunctionPtr func, int arg)
 	   name, (int) func, arg);
 
     StackAllocate (func, arg);
+    
 
 #ifdef USER_PROGRAM
 
