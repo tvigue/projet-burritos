@@ -6,12 +6,10 @@
 #include "userthread.h"
 #include "addrspace.h"
 #include "system.h"
-#include <fstream>
-#include <iostream>
-#include <string>
-using namespace std;
+#include "bitmap.h"
 
 static int nbThread;
+static BitMap * map;
 
 static void StartUserThread(int f){
 	int i;
@@ -25,9 +23,11 @@ static void StartUserThread(int f){
     // Initial program counter 
     machine->WriteRegister (PCReg, f);
     machine->WriteRegister (NextPCReg, f+4);
-    
+
+    int threadid=currentThread->getid();
+
 	// on modifie le Stack Pointer 
-	machine->WriteRegister (StackReg, 1024 -16 - (3*PageSize));
+	machine->WriteRegister (StackReg,(PageSize*3)+16+(PageSize*3*threadid));
 	// on passe par le registre 4 pour empiler l'argument de f
 	//machine->WriteRegister (4,argument);
 	
@@ -37,18 +37,20 @@ static void StartUserThread(int f){
 
 int do_UserThreadCreate(int f, int arg) {
 	Thread *t;
+	int indexmap;	
+
 	
-	nbThread ++;
 	// create thread	
-	t = new Thread("thread user");
-
-	//ofstream out("binary.txt",ios::binary);
-	//out.write((char *)&arg,sizeof(arg));
-	//out.close();
-
-	// initialize
+	indexmap=map->Find();
+	if(indexmap!=-1){
+	t = new Thread("thread user",indexmap);
+	nbThread ++;
 	t->Fork(StartUserThread,f);
 	return 0;
+	}else{
+	printf("Not enought Space for new thread\n");
+	return -1;
+	}
 }
 
 void do_UserThreadExit() {
@@ -59,6 +61,8 @@ void do_UserThreadExit() {
 
 void initUserThread() {
 	nbThread = 0;
+	int nbits=UserStackSize-16-(PageSize*3);
+	map=new BitMap(nbits/(PageSize*3));
 }
 
 void do_WaitUserThread() {

@@ -16,7 +16,7 @@
 #include "copyright.h"
 #include "filesys.h"
 
-#define UserStackSize		1024	// increase this as necessary!
+#define UserStackSize		2048	// increase this as necessary!
 
 class AddrSpace
 {
@@ -36,7 +36,7 @@ class AddrSpace
       TranslationEntry * pageTable;	// Assume linear page table translation
     // for now!
     unsigned int numPages;	// Number of pages in the virtual 
-    // address space
+    // address space 
 };
 
 #endif // ADDRSPACE_H
