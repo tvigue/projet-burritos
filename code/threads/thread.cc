@@ -32,6 +32,21 @@
 //      "threadName" is an arbitrary string, useful for debugging.
 //----------------------------------------------------------------------
 
+Thread::Thread (const char *threadName,int index)
+{
+    name = threadName;
+    stackTop = NULL;
+    stack = NULL;
+    status = JUST_CREATED;
+#ifdef CHANGED
+   threadid=index;
+#endif
+
+#ifdef USER_PROGRAM
+    space = NULL;
+#endif
+}
+
 Thread::Thread (const char *threadName)
 {
     name = threadName;
@@ -42,6 +57,12 @@ Thread::Thread (const char *threadName)
     space = NULL;
 #endif
 }
+
+#ifdef CHANGED
+int Thread::getid(){
+	return threadid;
+}
+#endif
 
 //----------------------------------------------------------------------
 // Thread::~Thread
