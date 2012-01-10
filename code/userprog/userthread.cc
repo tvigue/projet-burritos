@@ -46,7 +46,7 @@ int do_UserThreadCreate(int f, int arg) {
 
 void do_UserThreadExit() {
 	nbThread--;
-	delete(currentThread);
+	currentThread->Finish();
 }
 
 void initUserThread() {

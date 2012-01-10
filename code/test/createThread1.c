@@ -1,8 +1,7 @@
 #include "syscall.h"
 
 void function (void * a){
-	PutString("salut sa va");
-	PutChar('\n');
+	PutString("salut sa va\n");
 	UserThreadExit();
 }
 
