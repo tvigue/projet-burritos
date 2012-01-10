@@ -1,18 +1,18 @@
 #include "syscall.h"
 
 void function (void * a){
-	PutString("###########################");
-	PutChar('\n');
+	//int i;
+	//for(i=0;i<100;i++)
+	PutChar('T');
 	UserThreadExit();
 }
 
 int main(){
-
+	//int i;
 	int arg=5;
 	UserThreadCreate(function,&arg);
-	PutString("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
-	PutChar('c');
-	PutString(".........");
+	//for(i=0;i<1000;i++)
+	PutChar('M');
 	WaitUserThread();
-	Exit(0);
+	Halt();
 }
