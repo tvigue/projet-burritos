@@ -24,6 +24,7 @@
 #include "copyright.h"
 #include "system.h"
 #include "syscall.h"
+#include "synch.h"
 #include "synchconsole.h"
 #include "userthread.h"
 
@@ -80,6 +81,8 @@ void ExceptionHandler(ExceptionType which) {
     }
       
     #else
+    static Semaphore *verrou;
+    verrou = new Semaphore("verrou", 1);
     int adr = 0;
     int adr2 = 0;
     //int codeExit;
@@ -98,11 +101,15 @@ void ExceptionHandler(ExceptionType which) {
 		  	}
 		  		
 		  	case SC_PutChar:{
+		  		verrou->P();
+		  		printf("putChar\n");
 		  		synchconsole->SynchPutChar(machine->ReadRegister(4));
+		  		verrou->V();
 		  		break;
 	 		}
 	 		
 	 		case SC_PutString:{
+	 			printf("putString\n");
 	 			adr = machine->ReadRegister (4);
 		  		synchconsole->copyStringFromMachine(adr,buf,MAX_STRING_SIZE);
 		  		synchconsole->SynchPutString(buf);
@@ -137,6 +144,7 @@ void ExceptionHandler(ExceptionType which) {
 	 		}
 			
 			case SC_UserThreadCreate: {
+				printf("UserThreadCreate\n");
 				adr = machine->ReadRegister(4);
 				adr2 = machine->ReadRegister(5);
 				do_UserThreadCreate(adr,adr2);
@@ -144,6 +152,7 @@ void ExceptionHandler(ExceptionType which) {
 			}
 			
 			case SC_UserThreadExit: {
+				printf("UserThreadExit\n");
 				do_UserThreadExit();
 				break;
 			}
