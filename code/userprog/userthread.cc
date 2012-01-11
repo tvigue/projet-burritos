@@ -17,7 +17,7 @@ static void StartUserThread(int f){
 	// restore state
 
     for (i = 0; i < NumTotalRegs; i++)
-	machine->WriteRegister (i, 0);
+		machine->WriteRegister (i, 0);
 
     // Initial program counter 
     machine->WriteRegister (PCReg, f);
@@ -38,8 +38,6 @@ static void StartUserThread(int f){
 int do_UserThreadCreate(int f, int arg) {
 	Thread *t;
 	int indexmap;	
-	printf("%i,%i\n",(&arg)[0],(&arg)[1]);
-	
 	// create thread	
 	indexmap=map->Find();
 	if(indexmap!=-1){
@@ -55,7 +53,6 @@ int do_UserThreadCreate(int f, int arg) {
 void do_UserThreadExit() {
 	map->Clear(currentThread->getid());
 	currentThread->Finish();
-	
 }
 
 void initUserThread() {

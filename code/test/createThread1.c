@@ -1,18 +1,16 @@
 #include "syscall.h"
 
 void function (void * a){
-	PutString("Vos gueules\n");
+	PutChar('!');
 	UserThreadExit();
 }
 
 int main(){
-
-	int * arg=0;
-	int s=10;
-	int g=4;
-	arg[0]=(int)&s;
-	arg[1]=(int)&g;
-	UserThreadCreate(function,&s);
+	int arg=5;
+	int i;//,j=0;
+	for(i=0;i<100;i++){
+		UserThreadCreate(function,&arg);
+	}
 	WaitUserThread();
 	Exit(0);
 }
