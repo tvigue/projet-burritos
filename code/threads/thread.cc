@@ -104,10 +104,16 @@ Thread::~Thread ()
 //      "func" is the procedure to run concurrently.
 //      "arg" is a single argument to be passed to the procedure.
 //----------------------------------------------------------------------
-
+#ifdef CHANGED
+void
+Thread::Fork (VoidFunctionPtrArg func, Argument * arg)
+{
+#else
 void
 Thread::Fork (VoidFunctionPtr func, int arg)
 {
+#endif
+
     DEBUG ('t', "Forking thread \"%s\" with func = 0x%x, arg = %d\n",
 	   name, (int) func, arg);
 
@@ -350,10 +356,15 @@ ThreadPrint (int arg)
 //      "func" is the procedure to be forked
 //      "arg" is the parameter to be passed to the procedure
 //----------------------------------------------------------------------
-
+#ifdef CHANGED
+void
+Thread::StackAllocate (VoidFunctionPtrArg func, Argument * arg)
+{
+#else
 void
 Thread::StackAllocate (VoidFunctionPtr func, int arg)
 {
+#endif
     stack = (int *) AllocBoundedArray (StackSize * sizeof (int));
 
 #ifdef HOST_SNAKE
@@ -387,7 +398,11 @@ Thread::StackAllocate (VoidFunctionPtr func, int arg)
     // End of modification
     
     machineState[InitialPCState] = (int) func;
+#ifdef CHANGED
+    machineState[InitialArgState] = (int)arg;
+#else
     machineState[InitialArgState] = arg;
+#endif
     machineState[WhenDonePCState] = (int) ThreadFinish;
 }
 

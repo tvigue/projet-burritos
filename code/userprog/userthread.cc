@@ -7,21 +7,22 @@
 #include "addrspace.h"
 #include "system.h"
 #include "bitmap.h"
+#include "argument.h"
 
 static BitMap * map;
 
-static void StartUserThread(int f){
+static void StartUserThread(Argument * f){
 	int i;
 	//int argument = 0;
 
 	// restore state
 
     for (i = 0; i < NumTotalRegs; i++)
-		machine->WriteRegister (i, 0);
+	machine->WriteRegister (i, 0);
 
     // Initial program counter 
-    machine->WriteRegister (PCReg, f);
-    machine->WriteRegister (NextPCReg, f+4);
+    machine->WriteRegister (PCReg, f->getFunction());
+    machine->WriteRegister (NextPCReg, f->getFunction()+4);
 
     int threadid=currentThread->getid();
     int numPages=currentThread->space->getNumPages();
@@ -29,7 +30,7 @@ static void StartUserThread(int f){
 	// on modifie le Stack Pointer 
 	machine->WriteRegister (StackReg,(numPages*PageSize)-(PageSize*3)-16-(PageSize*3*threadid));
 	// on passe par le registre 4 pour empiler l'argument de f
-	//machine->WriteRegister (4,argument);
+	machine->WriteRegister (4,f->getArgs());
 	
 	machine->Run();
 	
@@ -41,8 +42,10 @@ int do_UserThreadCreate(int f, int arg) {
 	// create thread	
 	indexmap=map->Find();
 	if(indexmap!=-1){
+		//structure special argument
+		Argument * argu=new Argument(f,arg);
 		t = new Thread("thread user",indexmap);
-		t->Fork(StartUserThread,f);
+		t->Fork(StartUserThread,argu);
 		return 0;
 	}else{
 		printf("Not enought Space for new thread\n");
@@ -53,6 +56,7 @@ int do_UserThreadCreate(int f, int arg) {
 void do_UserThreadExit() {
 	map->Clear(currentThread->getid());
 	currentThread->Finish();
+	
 }
 
 void initUserThread() {
