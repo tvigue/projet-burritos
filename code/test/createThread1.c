@@ -1,9 +1,7 @@
 #include "syscall.h"
 
 void function (void * a){
-	int i;
-	for(i=0;i<100;i++)
-	PutChar('T');
+	PutChar('a');
 	UserThreadExit();
 }
 
@@ -11,10 +9,9 @@ int main(){
 
 	int arg=5;
 	int i;
-	UserThreadCreate(function,&arg);
-	for(i=0;i<100;i++)
-	PutChar('M');
-	
+	for(i=0;i<10;i++){
+		UserThreadCreate(function,&arg);
+	}
 	WaitUserThread();
 	Exit(0);
 }
