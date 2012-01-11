@@ -8,8 +8,11 @@
 #include "system.h"
 #include "bitmap.h"
 #include "argument.h"
+#include "synch.h"
 
 static BitMap * map;
+static Condition *join;
+static Lock *mutex;
 
 static void StartUserThread(Argument * f){
 	int i;
@@ -46,28 +49,40 @@ int do_UserThreadCreate(int f, int arg) {
 		Argument * argu=new Argument(f,arg);
 		t = new Thread("thread user",indexmap);
 		t->Fork(StartUserThread,argu);
-		return 0;
+		return indexmap;
 	}else{
 		printf("Not enought Space for new thread\n");
 		return -1;
 	}
 }
 
-void do_UserThreadExit() {
+void do_UserThreadExit() {	
+	mutex->Acquire();
 	map->Clear(currentThread->getid());
-	currentThread->Finish();
-	
+	join->Broadcast(mutex);
+	mutex->Release();
+	currentThread->Finish();	
 }
 
 void initUserThread() {
 	int nbits=UserStackSize-16-(PageSize*3);
 	map=new BitMap(nbits/(PageSize*3));
+	mutex=new Lock("verrou");
+	join=new Condition("condition");
 }
 
 void do_WaitUserThread() {
 	while(!map->CheckClear()){
 		currentThread->Yield();
 	}
+}
+
+void do_UserThreadJoin(int n) {
+	mutex->Acquire();
+	while(map->Test(n)){
+		join->Wait(mutex);
+	}
+	mutex->Release();
 }
 
 #endif //CHANGED

@@ -149,5 +149,8 @@ class Condition
   private:
     const char *name;
     // plus some other stuff you'll need to define
+    #ifdef CHANGED
+    List *queue;
+    #endif //CHANGED
 };
 #endif // SYNCH_H
