@@ -8,7 +8,6 @@
 #include "system.h"
 #include "bitmap.h"
 
-static int nbThread;
 static BitMap * map;
 
 static void StartUserThread(int f){
@@ -44,7 +43,6 @@ int do_UserThreadCreate(int f, int arg) {
 	indexmap=map->Find();
 	if(indexmap!=-1){
 		t = new Thread("thread user",indexmap);
-		nbThread ++;
 		t->Fork(StartUserThread,f);
 		return 0;
 	}else{
@@ -54,19 +52,18 @@ int do_UserThreadCreate(int f, int arg) {
 }
 
 void do_UserThreadExit() {
-	nbThread--;
+	map->Clear(currentThread->getid());
 	currentThread->Finish();
 	
 }
 
 void initUserThread() {
-	nbThread = 0;
 	int nbits=UserStackSize-16-(PageSize*3);
 	map=new BitMap(nbits/(PageSize*3));
 }
 
 void do_WaitUserThread() {
-	while(nbThread>0){
+	while(!map->CheckClear()){
 		currentThread->Yield();
 	}
 }

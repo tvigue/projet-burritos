@@ -123,6 +123,14 @@ BitMap::NumClear ()
     return count;
 }
 
+#ifdef CHANGED
+int BitMap::CheckClear()
+{
+	return(NumClear()==numBits);
+
+}
+#endif
+
 //----------------------------------------------------------------------
 // BitMap::Print
 //      Print the contents of the bitmap, for debugging.
