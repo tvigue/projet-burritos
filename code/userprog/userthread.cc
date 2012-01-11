@@ -27,7 +27,7 @@ static void StartUserThread(int f){
     int threadid=currentThread->getid();
 
 	// on modifie le Stack Pointer 
-	machine->WriteRegister (StackReg,(PageSize*3)+16+(PageSize*3*threadid));
+	machine->WriteRegister (StackReg,UserStackSize-(PageSize*3)-16-(PageSize*3*threadid));
 	// on passe par le registre 4 pour empiler l'argument de f
 	//machine->WriteRegister (4,argument);
 	
@@ -43,13 +43,13 @@ int do_UserThreadCreate(int f, int arg) {
 	// create thread	
 	indexmap=map->Find();
 	if(indexmap!=-1){
-	t = new Thread("thread user",indexmap);
-	nbThread ++;
-	t->Fork(StartUserThread,f);
-	return 0;
+		t = new Thread("thread user",indexmap);
+		nbThread ++;
+		t->Fork(StartUserThread,f);
+		return 0;
 	}else{
-	printf("Not enought Space for new thread\n");
-	return -1;
+		printf("Not enought Space for new thread\n");
+		return -1;
 	}
 }
 
