@@ -121,6 +121,13 @@ AddrSpace::AddrSpace (OpenFile * executable)
 
 }
 
+#ifdef CHANGED
+unsigned int AddrSpace::getNumPages(){
+    return numPages;
+
+}
+#endif
+
 //----------------------------------------------------------------------
 // AddrSpace::~AddrSpace
 //      Dealloate an address space.  Nothing for now!

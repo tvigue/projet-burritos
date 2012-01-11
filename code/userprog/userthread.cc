@@ -24,9 +24,10 @@ static void StartUserThread(int f){
     machine->WriteRegister (NextPCReg, f+4);
 
     int threadid=currentThread->getid();
+    int numPages=currentThread->space->getNumPages();
 
 	// on modifie le Stack Pointer 
-	machine->WriteRegister (StackReg,UserStackSize-(PageSize*3)-16-(PageSize*3*threadid));
+	machine->WriteRegister (StackReg,(numPages*PageSize)-(PageSize*3)-16-(PageSize*3*threadid));
 	// on passe par le registre 4 pour empiler l'argument de f
 	//machine->WriteRegister (4,argument);
 	
@@ -37,7 +38,7 @@ static void StartUserThread(int f){
 int do_UserThreadCreate(int f, int arg) {
 	Thread *t;
 	int indexmap;	
-
+	printf("%i,%i\n",(&arg)[0],(&arg)[1]);
 	
 	// create thread	
 	indexmap=map->Find();

@@ -7,9 +7,12 @@ void function (void * a){
 
 int main(){
 
-	int arg=5;
-	UserThreadCreate(function,&arg);
-	UserThreadCreate(function,&arg);
+	int * arg=0;
+	int s=10;
+	int g=4;
+	arg[0]=(int)&s;
+	arg[1]=(int)&g;
+	UserThreadCreate(function,&s);
 	WaitUserThread();
 	Exit(0);
 }
