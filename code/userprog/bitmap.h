@@ -45,14 +45,15 @@ class BitMap
     // effect, set the bit. 
     // If no bits are clear, return -1.
     int NumClear ();		// Return the number of clear bits
-
+#ifdef CHANGED
+    int CheckClear();		// Return true if all the bits are cleared
+#endif
     void Print ();		// Print contents of bitmap
 
     // These aren't needed until FILESYS, when we will need to read and 
     // write the bitmap to a file
     void FetchFrom (OpenFile * file);	// fetch contents from disk 
     void WriteBack (OpenFile * file);	// write contents to disk
-
   private:
     int numBits;		// number of bits in the bitmap
     int numWords;		// number of words of bitmap storage
