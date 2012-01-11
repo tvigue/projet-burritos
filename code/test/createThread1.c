@@ -14,6 +14,7 @@ int main(){
 	UserThreadCreate(function,&arg);
 	for(i=0;i<100;i++)
 	PutChar('M');
+	
 	WaitUserThread();
 	Exit(0);
 }
