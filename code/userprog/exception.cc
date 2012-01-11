@@ -144,7 +144,8 @@ void ExceptionHandler(ExceptionType which) {
 			case SC_UserThreadCreate: {
 				adr = machine->ReadRegister(4);
 				adr2 = machine->ReadRegister(5);
-				do_UserThreadCreate(adr,adr2);
+				n = do_UserThreadCreate(adr,adr2);
+				machine->WriteRegister(2,(int) n);
 				break;
 			}
 			
@@ -158,6 +159,11 @@ void ExceptionHandler(ExceptionType which) {
 				break;
 			}
 			
+			case SC_UserThreadJoin: {
+				n=machine->ReadRegister(4);
+				do_UserThreadJoin(n);
+				break;
+			}
 	 		
 	 		case SC_Exit: {
 	 			//codeExit  = machine->ReadRegister(4);

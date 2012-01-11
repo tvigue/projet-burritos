@@ -144,23 +144,52 @@ void Lock::Release () {
 
 Condition::Condition (const char *debugName)
 {
+	name = debugName;
+	#ifdef CHANGED
+	queue = new List;
+	#endif //CHANGED
 }
 
 Condition::~Condition ()
 {
-}
-void
-Condition::Wait (Lock * conditionLock)
-{
-    ASSERT (FALSE);
+	#ifdef CHANGED
+	delete queue;
+	#endif //CHANGED
 }
 
-void
-Condition::Signal (Lock * conditionLock)
-{
-}
-void
-Condition::Broadcast (Lock * conditionLock)
-{
+void Condition::Wait (Lock * conditionLock) {
+	 #ifdef CHANGED
+	 IntStatus oldLevel = interrupt->SetLevel (IntOff);
+	 //release lock
+	 conditionLock->Release();
+	 queue->Append ((void *) currentThread);
+	 currentThread->Sleep();
+	 //retake lock
+	 conditionLock->Acquire();
+    (void) interrupt->SetLevel (oldLevel);
+    #endif //CHANGED
 }
 
+void Condition::Signal (Lock * conditionLock) {
+	#ifdef CHANGED
+    IntStatus oldLevel = interrupt->SetLevel (IntOff);
+	Thread *thread;
+    thread = (Thread *) queue->Remove ();
+    if (thread != NULL)
+		scheduler->ReadyToRun (thread);
+    (void) interrupt->SetLevel (oldLevel);
+    #endif //CHANGED
+}
+
+void Condition::Broadcast (Lock * conditionLock) {
+#ifdef CHANGED
+    IntStatus oldLevel = interrupt->SetLevel (IntOff);
+	Thread *thread;
+    thread = (Thread *) queue->Remove ();
+    while (thread != NULL){
+		scheduler->ReadyToRun (thread);
+		thread = (Thread *) queue->Remove ();
+	}
+    (void) interrupt->SetLevel (oldLevel);
+    #endif //CHANGED
+}

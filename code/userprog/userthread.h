@@ -10,6 +10,7 @@
 	extern void do_UserThreadExit();
 	extern void initUserThread();
 	extern void do_WaitUserThread();
+	extern void do_UserThreadJoin(int n);
 
 
 #endif

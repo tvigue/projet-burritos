@@ -1,24 +1,27 @@
 #include "syscall.h"
-
-void function (void * a){
-	PutString((char *)a);
+int n,m,arg=5;
+int T[99];
+void function1(void * a){
+	int i;
+	for(i=0;i<100;i++)
+		PutInt(i);
 	UserThreadExit();
 }
 
-void function2 (void * a){
-	PutString((char*)(((void**)a)[0]));
-	PutInt((int)(((void**)a)[1]));
+void function2(void * a){
+	int i;
+	for(i=0;i<100;i++)
+		T[i]=UserThreadCreate(function1,&arg);
+	
+	for(i=0;i<100;i++)
+		if(T[i]!=-1)
+			UserThreadJoin(T[i]);
+	PutInt(100);
 	UserThreadExit();
 }
 
 int main(){
-	//char * arg="Cool";
-	char * arg2="Super";
-	void * arg[2];
-	arg[0]=(void *)"Cool";
-	arg[1]=(void *)10;
-	UserThreadCreate(function2,arg);
-	UserThreadCreate(function,(void *)arg2);
-	WaitUserThread();
+	m=UserThreadCreate(function2,&arg);
+	UserThreadJoin(m);
 	Exit(0);
 }
