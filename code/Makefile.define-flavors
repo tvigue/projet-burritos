@@ -96,7 +96,7 @@ USER_FLAVORS=step3
 # Add here your personal flavors
 
 $(eval $(call define-flavor,step2,userprog,synchconsole.cc))
-$(eval $(call define-flavor,step3,userprog,synchconsole.cc userthread.cc))
+$(eval $(call define-flavor,step3,userprog,synchconsole.cc userthread.cc argument.cc))
 
 
 ###########################################################################

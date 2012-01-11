@@ -1,16 +1,13 @@
 #include "syscall.h"
 
 void function (void * a){
-	PutChar('!');
+	PutString((char *)a);
 	UserThreadExit();
 }
 
 int main(){
-	int arg=5;
-	int i;//,j=0;
-	for(i=0;i<100;i++){
-		UserThreadCreate(function,&arg);
-	}
+	char *arg="Cool";
+	UserThreadCreate(function,(void *)arg);
 	WaitUserThread();
 	Exit(0);
 }

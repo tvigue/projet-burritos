@@ -45,6 +45,10 @@
 #include "addrspace.h"
 #endif
 
+#ifdef CHANGED
+#include "argument.h"
+#endif
+
 // CPU register state to be saved on context switch.  
 // The SPARC and MIPS only need 10 registers, but the Snake needs 18.
 // For simplicity, this is just the max over all architectures.
@@ -95,9 +99,12 @@ class Thread
      int getid();
 #endif
 
+#ifdef CHANGED
     // basic thread operations
-
-    void Fork (VoidFunctionPtr func, int arg);	// Make thread run (*func)(arg)
+    void Fork (VoidFunctionPtrArg func, Argument * arg);	// Make thread run (*func)(arg)
+#else
+    void Fork (VoidFunctionPtr func, int arg);
+#endif
     void Yield ();		// Relinquish the CPU if any 
     // other thread is runnable
     void Sleep ();		// Put the thread to sleep and 
@@ -127,8 +134,11 @@ class Thread
     // (If NULL, don't deallocate stack)
     ThreadStatus status;	// ready, running or blocked
     const char *name;
-
+#ifdef CHANGED
+    void StackAllocate (VoidFunctionPtrArg func, Argument * arg);
+#else
     void StackAllocate (VoidFunctionPtr func, int arg);
+#endif
     // Allocate a stack for thread.
     // Used internally by Fork()
 
@@ -136,6 +146,7 @@ class Thread
 // A thread running a user program actually has *two* sets of CPU registers -- 
 // one for its state while executing user code, one for its state 
 // while executing kernel code.
+
 
     int userRegisters[NumTotalRegs];	// user-level CPU register state
 

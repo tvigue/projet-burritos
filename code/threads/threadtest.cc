@@ -11,7 +11,9 @@
 
 #include "copyright.h"
 #include "system.h"
-
+#ifdef CHANGED
+#include "argument.h"
+#endif
 //----------------------------------------------------------------------
 // SimpleThread
 //      Loop 5 times, yielding the CPU to another ready thread 
@@ -33,6 +35,14 @@ SimpleThread (int which)
       }
 }
 
+#ifdef CHANGED
+void
+SimpleThread (Argument * which)
+{
+
+}
+#endif
+
 //----------------------------------------------------------------------
 // ThreadTest
 //      Set up a ping-pong between two threads, by forking a thread 
@@ -45,7 +55,11 @@ ThreadTest ()
     DEBUG ('t', "Entering SimpleTest\n");
 
     Thread *t = new Thread ("forked thread");
-
-    t->Fork (SimpleThread, 1);
+#ifdef CHANGED
+	Argument * arg=new Argument(0,0);
+    t->Fork (SimpleThread,arg);
+#else
+	t->Fork (SimpleThread, 1);
+#endif
     SimpleThread (0);
 }

@@ -25,6 +25,9 @@
 
 #include "copyright.h"
 
+#ifdef CHANGED
+#include "argument.h"
+#endif
 // Miscellaneous useful routines
 
 #include <bool.h>
@@ -48,7 +51,11 @@
 // This is used by Thread::Fork and for interrupt handlers, as well
 // as a couple of other places.
 
+#ifdef CHANGED
+typedef void (*VoidFunctionPtrArg) (Argument * arg);
+#endif
 typedef void (*VoidFunctionPtr) (int arg);
+
 typedef void (*VoidNoArgFunctionPtr) ();
 
 

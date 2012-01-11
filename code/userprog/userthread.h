@@ -11,10 +11,6 @@
 	extern void initUserThread();
 	extern void do_WaitUserThread();
 
-typedef struct argument
-{
-	void func(void *arg);
-	char * args;
-}argument;
+
 #endif
 #endif //CHANGED
