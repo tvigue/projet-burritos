@@ -13,15 +13,17 @@
 static BitMap * map;
 static Condition *join;
 static Lock *mutex;
+static int ret;
 
 static void StartUserThread(Argument * f){
 	int i;
 	//int argument = 0;
 
-	// restore state
-
     for (i = 0; i < NumTotalRegs; i++)
-	machine->WriteRegister (i, 0);
+		machine->WriteRegister (i, 0);
+		
+	
+	machine->WriteRegister(31,ret);
 
     // Initial program counter 
     machine->WriteRegister (PCReg, f->getFunction());
@@ -40,9 +42,10 @@ static void StartUserThread(Argument * f){
 }
 
 int do_UserThreadCreate(int f, int arg) {
+	ret = machine->ReadRegister(6);
 	Thread *t;
 	int indexmap;	
-	// create thread	
+	// create thread
 	indexmap=map->Find();
 	if(indexmap!=-1){
 		//structure special argument

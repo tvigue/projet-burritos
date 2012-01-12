@@ -96,7 +96,7 @@ void ExceptionHandler(ExceptionType which) {
     		
 			case SC_Halt:{
 				DEBUG ('a', "Shutdown, initiated by user program.\n");
-		  		interrupt->Halt ();
+		  		interrupt->Halt();
 		 		break;
 		  	}
 		  		
@@ -144,6 +144,7 @@ void ExceptionHandler(ExceptionType which) {
 			case SC_UserThreadCreate: {
 				adr = machine->ReadRegister(4);
 				adr2 = machine->ReadRegister(5);
+				printf("\n=%i=\n",machine->ReadRegister(6));
 				n = do_UserThreadCreate(adr,adr2);
 				machine->WriteRegister(2,(int) n);
 				break;
@@ -168,6 +169,8 @@ void ExceptionHandler(ExceptionType which) {
 	 		case SC_Exit: {
 	 			//codeExit  = machine->ReadRegister(4);
 				DEBUG('a', "Shutdown, initiated by user program.\n");
+				DEBUG('t', "Wait users threads.\n");
+				do_UserThreadWait();
 				interrupt->Halt();
 				break;
 			}
