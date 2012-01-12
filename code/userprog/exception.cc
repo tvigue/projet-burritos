@@ -144,7 +144,6 @@ void ExceptionHandler(ExceptionType which) {
 			case SC_UserThreadCreate: {
 				adr = machine->ReadRegister(4);
 				adr2 = machine->ReadRegister(5);
-				printf("\n=%i=\n",machine->ReadRegister(6));
 				n = do_UserThreadCreate(adr,adr2);
 				machine->WriteRegister(2,(int) n);
 				break;
