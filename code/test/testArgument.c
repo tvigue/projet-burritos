@@ -19,6 +19,6 @@ int main(){
 	arg[1]=(void *)10;
 	UserThreadCreate(function2,arg);
 	UserThreadCreate(function,(void *)arg2);
-	WaitUserThread();
+	UserThreadWait();
 	Exit(0);
 }
