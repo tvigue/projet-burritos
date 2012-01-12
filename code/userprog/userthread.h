@@ -9,7 +9,7 @@
 	extern int do_UserThreadCreate(int f, int arg);
 	extern void do_UserThreadExit();
 	extern void initUserThread();
-	extern void do_WaitUserThread();
+	extern void do_UserThreadWait();
 	extern void do_UserThreadJoin(int n);
 
 

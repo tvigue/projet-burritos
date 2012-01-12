@@ -124,8 +124,8 @@ UserThreadExit:
 	.globl WaitUserThread
 	.ent	WaitUserThread		
 
-WaitUserThread:
-	addiu $2,$0,SC_WaitUserThread
+UserThreadWait:
+	addiu $2,$0,SC_UserThreadWait
 	syscall
 	j	$31
 	.end WaitUserThread

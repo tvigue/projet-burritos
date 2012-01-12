@@ -154,8 +154,8 @@ void ExceptionHandler(ExceptionType which) {
 				break;
 			}
 			
-			case SC_WaitUserThread: {
-				do_WaitUserThread();
+			case SC_UserThreadWait: {
+				do_UserThreadWait();
 				break;
 			}
 			

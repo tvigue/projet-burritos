@@ -71,10 +71,12 @@ void initUserThread() {
 	join=new Condition("condition");
 }
 
-void do_WaitUserThread() {
+void do_UserThreadWait() {
+	mutex->Acquire();
 	while(!map->CheckClear()){
-		currentThread->Yield();
+		join->Wait(mutex);
 	}
+	mutex->Release();
 }
 
 void do_UserThreadJoin(int n) {
