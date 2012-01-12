@@ -121,14 +121,14 @@ UserThreadExit:
 	j	$31
 	.end UserThreadExit
 
-	.globl WaitUserThread
-	.ent	WaitUserThread		
+	.globl UserThreadWait
+	.ent	UserThreadWait	
 
 UserThreadWait:
 	addiu $2,$0,SC_UserThreadWait
 	syscall
 	j	$31
-	.end WaitUserThread
+	.end UserThreadWait
 
 	.globl UserThreadJoin
 	.ent	UserThreadJoin		

@@ -13,15 +13,13 @@ void function2(void * a){
 	for(i=0;i<100;i++)
 		T[i]=UserThreadCreate(function1,&arg);
 	
-	for(i=0;i<100;i++)
-		if(T[i]!=-1)
-			UserThreadJoin(T[i]);
 	PutInt(100);
 	UserThreadExit();
 }
 
 int main(){
 	m=UserThreadCreate(function2,&arg);
-	UserThreadJoin(m);
+	UserThreadWait();
+	PutString("lalala\n");
 	Exit(0);
 }

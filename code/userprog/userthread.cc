@@ -66,9 +66,9 @@ void do_UserThreadExit() {
 
 void initUserThread() {
 	int nbits=UserStackSize-16-(PageSize*3);
-	map=new BitMap(nbits/(PageSize*3));
-	mutex=new Lock("verrou");
-	join=new Condition("condition");
+	map = new BitMap(nbits/(PageSize*3));
+	mutex = new Lock("verrou");
+	join = new Condition("condition");
 }
 
 void do_UserThreadWait() {
