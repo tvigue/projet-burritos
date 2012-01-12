@@ -4,6 +4,7 @@ void function1(void * a){
 }
 
 int main(){
+	sem_t sem;
 	int i;
 	int j=3;
 	j++;
