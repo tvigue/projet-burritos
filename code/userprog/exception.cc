@@ -81,8 +81,6 @@ void ExceptionHandler(ExceptionType which) {
     }
       
     #else
-    static Semaphore *verrou;
-    verrou = new Semaphore("verrou", 1);
     int adr = 0;
     int adr2 = 0;
     //int codeExit;
@@ -101,9 +99,7 @@ void ExceptionHandler(ExceptionType which) {
 		  	}
 		  		
 		  	case SC_PutChar:{
-		  		verrou->P();
 		  		synchconsole->SynchPutChar(machine->ReadRegister(4));
-		  		verrou->V();
 		  		break;
 	 		}
 	 		
@@ -144,6 +140,7 @@ void ExceptionHandler(ExceptionType which) {
 			case SC_UserThreadCreate: {
 				adr = machine->ReadRegister(4);
 				adr2 = machine->ReadRegister(5);
+				entier = machine->ReadRegister(6);
 				n = do_UserThreadCreate(adr,adr2);
 				machine->WriteRegister(2,(int) n);
 				break;
