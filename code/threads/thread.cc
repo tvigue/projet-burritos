@@ -39,7 +39,7 @@ Thread::Thread (const char *threadName,int index)
     stack = NULL;
     status = JUST_CREATED;
 #ifdef CHANGED
-   threadid=index;
+    bitmapspace=index;
 #endif
 
 #ifdef USER_PROGRAM
@@ -59,8 +59,16 @@ Thread::Thread (const char *threadName)
 }
 
 #ifdef CHANGED
-int Thread::getid(){
+int Thread::getBitMap(){
+	return bitmapspace;
+}
+
+int Thread::getID(){
 	return threadid;
+}
+
+void Thread::setID(int id){
+	threadid=id;
 }
 #endif
 

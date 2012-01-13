@@ -47,6 +47,7 @@ class BitMap
     int NumClear ();		// Return the number of clear bits
 #ifdef CHANGED
     int CheckClear();		// Return true if all the bits are cleared
+    int getNumBits();
 #endif
     void Print ();		// Print contents of bitmap
 

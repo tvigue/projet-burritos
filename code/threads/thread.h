@@ -87,6 +87,7 @@ class Thread
     int machineState[MachineStateSize];	// all registers except for stackTop
 #ifdef CHANGED
     int threadid;
+    int bitmapspace;
 #endif
   public:
       Thread (const char *debugName,int index);	// initialize a Thread 
@@ -96,7 +97,9 @@ class Thread
     // must not be running when delete 
     // is called
 #ifdef CHANGED
-     int getid();
+     int getID();
+     int getBitMap();
+     void setID(int id);
 #endif
 
 #ifdef CHANGED

@@ -129,6 +129,10 @@ int BitMap::CheckClear()
 	return(NumClear()==numBits);
 
 }
+
+int BitMap::getNumBits(){
+	return numBits;
+}
 #endif
 
 //----------------------------------------------------------------------

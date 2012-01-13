@@ -2,13 +2,13 @@
 
 void function (void * a){
 	PutString((char *)a);
-	UserThreadExit();
+	//UserThreadExit();
 }
 
 void function2 (void * a){
 	PutString((char*)(((void**)a)[0]));
 	PutInt((int)(((void**)a)[1]));
-	UserThreadExit();
+	//UserThreadExit();
 }
 
 int main(){
