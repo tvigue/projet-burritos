@@ -141,7 +141,7 @@ AddrSpace::~AddrSpace ()
   // End of modification
 }
 
-//----------------------------------------------------------------------
+//------------------&----------------------------------------------------
 // AddrSpace::InitRegisters
 //      Set the initial values for the user-level register set.
 //
