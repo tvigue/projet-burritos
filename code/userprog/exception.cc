@@ -27,6 +27,7 @@
 #include "synch.h"
 #include "synchconsole.h"
 #include "userthread.h"
+#include "usersem.h"
 
 
 //----------------------------------------------------------------------
@@ -69,8 +70,8 @@ UpdatePC () {
 
 void ExceptionHandler(ExceptionType which) {
 	int type = machine->ReadRegister(2);
-
     #ifndef CHANGED
+    
     
     if ((which == SyscallException) && (type == SC_Halt)) {
 	  	DEBUG ('a', "Shutdown, initiated by user program.\n");
@@ -160,12 +161,33 @@ void ExceptionHandler(ExceptionType which) {
 				do_UserThreadJoin(n);
 				break;
 			}
+			
+			case SC_UserSemCreate: {
+				entier = machine->ReadRegister(4);
+				n = do_UserSemCreate(entier);
+				machine->WriteRegister(2,(int) n);
+				break;
+			}
+			
+			case SC_UserSemPost: {
+				n = machine->ReadRegister(4);
+				do_UserSemPost(n);
+				break;
+			}
+			
+			case SC_UserSemWait: {
+				n = machine->ReadRegister(4);
+				do_UserSemWait(n);
+				break;
+			}
 	 		
 	 		case SC_Exit: {
 	 			//codeExit  = machine->ReadRegister(4);
 				DEBUG('a', "Shutdown, initiated by user program.\n");
 				DEBUG('t', "Wait users threads.\n");
 				do_UserThreadWait();
+				//del semaphores user
+				delUserSem();
 				interrupt->Halt();
 				break;
 			}

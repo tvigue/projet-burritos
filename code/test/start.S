@@ -139,11 +139,39 @@ UserThreadJoin:
 	syscall
 	j	$31
 	.end UserThreadJoin
+	
+	.globl UserSemCreate
+	.ent	UserSemCreate	
+	
+UserSemCreate:
+	addiu $2,$0,SC_UserSemCreate
+	syscall
+	j	$31
+	.end UserSemCreate
+	
+	.globl UserSemPost
+	.ent	UserSemPost	
+	
+UserSemPost:
+	addiu $2,$0,SC_UserSemPost
+	syscall
+	j	$31
+	.end UserSemPost
+	
+	.globl UserSemWait
+	.ent	UserSemWait	
+	
+UserSemWait:
+	addiu $2,$0,SC_UserSemWait
+	syscall
+	j	$31
+	.end UserSemWait
 
 	.globl Exit
 	.ent	Exit	
 
 #endif // CHANGED	
+
 	
 Exit:
 	addiu $2,$0,SC_Exit

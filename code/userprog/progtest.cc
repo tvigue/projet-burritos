@@ -17,6 +17,7 @@
 #ifdef CHANGED
 #include "synchconsole.h"
 #include "userthread.h"
+#include "usersem.h"
 #endif
 
 //----------------------------------------------------------------------
@@ -45,6 +46,7 @@ StartProcess (char *filename)
 
 	#ifdef CHANGED
 	initUserThread();
+	initUserSem();
 	#endif
 	
     machine->Run ();		// jump to the user progam

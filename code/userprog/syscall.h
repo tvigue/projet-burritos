@@ -41,6 +41,10 @@
 #define SC_UserThreadExit 18
 #define SC_UserThreadWait 19
 #define SC_UserThreadJoin 20
+
+#define SC_UserSemCreate 22
+#define SC_UserSemPost 23
+#define SC_UserSemWait 24
 #endif // CHANGED
 
 #ifdef IN_USER_MODE
@@ -142,6 +146,9 @@ void Fork (void (*func) ());
 void Yield ();
 
 #ifdef CHANGED
+
+typedef int sem_t;
+
 void PutChar(char c);
 
 void PutString(char* c);
@@ -161,6 +168,12 @@ void UserThreadExit();
 void UserThreadWait();
 
 void UserThreadJoin();
+
+int UserSemCreate(int n);
+
+void UserSemPost(int sem);
+
+void UserSemWait(int sem);
 
 #endif // CHANGED
 
