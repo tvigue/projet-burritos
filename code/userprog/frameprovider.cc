@@ -19,7 +19,6 @@ FrameProvider::~FrameProvider(){
 bool FrameProvider::TestFrame (int which)
 {
     ASSERT (which >= 0 && which < numFrames);
-
     if (map[which]==1)
 	return TRUE;
     else
@@ -35,12 +34,13 @@ void FrameProvider::MarkFrame (int which)
 
 int FrameProvider::GetEmptyFrame(){
 	    
-	for (int i = 0; i < numFrames; i++)
+	for (int i = 0; i < numFrames; i++){
 	if (!TestFrame (i))
 	  {
 	      MarkFrame(i);
 	      return i;
 	  }
+	 }
     return -1;
 
 }

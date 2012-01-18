@@ -191,6 +191,12 @@ void ExceptionHandler(ExceptionType which) {
 				interrupt->Halt();
 				break;
 			}
+			
+			case SC_ForkExec: {
+				n=machine->ReadRegister(4);
+				do_ForkExec(n);
+				break;
+			}
 		
   		
 		  	default :{

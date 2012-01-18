@@ -43,6 +43,26 @@ static void StartUserThread(Argument * f){
 	
 }
 
+static void StartUserProcess(Argument * f){
+	char buf[MAX_STRING_SIZE];
+	synchconsole->copyStringFromMachine(f->getArgs(),buf,MAX_STRING_SIZE);
+	OpenFile *executable = fileSystem->Open (buf);
+    AddrSpace *space;
+
+    if (executable == NULL)
+      {
+	  printf ("Unable to open file %s\n",buf);
+	  return;
+      }
+    space = new AddrSpace (executable);
+    currentThread->space = space;
+    delete executable;		// close file
+    space->InitRegisters ();	// set the initial register values
+    space->RestoreState ();	// load page table register
+    machine->Run ();		// jump to the user progam
+	
+}
+
 int do_UserThreadCreate(int f, int arg) {
 	ret = machine->ReadRegister(6);
 	Thread *t;
@@ -117,6 +137,14 @@ void do_UserThreadJoin(int n) {
 		}
 	}
 	mutex->Release();
+}
+
+void do_ForkExec(int n){
+
+	Thread *t;
+	t=new Thread("mainFork",-1);
+	Argument * arg =new Argument(0,n);
+	t->Fork(StartUserProcess,arg);
 }
 
 

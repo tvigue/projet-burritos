@@ -167,11 +167,19 @@ UserSemWait:
 	j	$31
 	.end UserSemWait
 
+	.globl ForkExec
+	.ent	ForkExec	
+	
+ForkExec:
+	addiu $2,$0,SC_ForkExec
+	syscall
+	j	$31
+	.end ForkExec
+
+#endif // CHANGED
+
 	.globl Exit
 	.ent	Exit	
-
-#endif // CHANGED	
-
 	
 Exit:
 	addiu $2,$0,SC_Exit
