@@ -41,7 +41,7 @@
 #define SC_UserThreadExit 18
 #define SC_UserThreadWait 19
 #define SC_UserThreadJoin 20
-
+#define SC_ForkExec 21
 #define SC_UserSemCreate 22
 #define SC_UserSemPost 23
 #define SC_UserSemWait 24
@@ -174,6 +174,8 @@ int UserSemCreate(int n);
 void UserSemPost(int sem);
 
 void UserSemWait(int sem);
+
+void ForkExec(char *);
 
 #endif // CHANGED
 

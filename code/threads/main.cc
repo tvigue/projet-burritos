@@ -53,6 +53,10 @@
 #include "utility.h"
 #include "system.h"
 
+#ifdef CHANGED
+#include "frameprovider.h"
+#endif
+
 
 // External functions used by this file
 
@@ -63,6 +67,7 @@ extern void MailTest (int networkID);
 
 #ifdef CHANGED
 extern void SynchConsoleTest (char *in, char *out);
+FrameProvider *FP;
 #endif //CHANGED
 
 //----------------------------------------------------------------------
@@ -87,6 +92,10 @@ main (int argc, char **argv)
 
     DEBUG ('t', "Entering main");
     (void) Initialize (argc, argv);
+    
+#ifdef CHANGED
+FP=new FrameProvider();
+#endif
 
 #ifdef THREADS
     ThreadTest ();
@@ -131,6 +140,8 @@ main (int argc, char **argv)
 			  }
 		interrupt->Halt ();
 	    }
+	    
+	    
 	    #endif //CHANGED
 	    
 #endif // USER_PROGRAM

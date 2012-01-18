@@ -23,6 +23,10 @@
 #include <strings.h>		/* for bzero */
 
 #ifdef CHANGED
+#include "frameprovider.h"
+
+extern FrameProvider * FP;
+
 static void ReadAtVirtual(OpenFile *executable, int virtualaddr,
 								int numBytes, int position,
 								TranslationEntry *pageTable,unsigned numPages){
@@ -31,29 +35,36 @@ static void ReadAtVirtual(OpenFile *executable, int virtualaddr,
 	int i;
 	int page = virtualaddr / PageSize;
 	int low = virtualaddr & (PageSize -1);
+	
+	//printf("page :%i\n",page);
+	//printf("low :%i\n",low);
+	
 	//read beggining
 	if(low != 0){
 		executable->ReadAt(buf,PageSize-low,position);
+	//:printf("page physique: %i\n",pageTable[page].physicalPage);
 		for(i=low;i<PageSize;i++)
-			machine->WriteMem(pageTable[page].physicalPage*PageSize+i,1,(int)buf[i-low]);
+			machine->WriteMem(page*PageSize+i,1,(int)buf[i-low]);
 		page++;
 		position += PageSize-low;
 		numBytes -= PageSize-low;
 	}
 	//read entire page
 	while(numBytes > PageSize){
+		//printf("page physique: %i\n",pageTable[page].physicalPage);
 		executable->ReadAt(buf,PageSize,position);
 		for(i=0;i<PageSize;i++)
-			machine->WriteMem(pageTable[page].physicalPage*PageSize+i,1,(int)buf[i]);
+			machine->WriteMem(page*PageSize+i,1,(int)buf[i]);
 		page++;
 		position += PageSize;
 		numBytes -= PageSize;
 	}
 	//read the remain
 	if(numBytes != 0){
+		//printf("page physique: %i\n",pageTable[page].physicalPage);
 		executable->ReadAt(buf,numBytes,position);
 		for(i=0;i<numBytes;i++)
-			machine->WriteMem(pageTable[page].physicalPage*PageSize+i,1,(int)buf[i]);
+			machine->WriteMem(page*PageSize+i,1,(int)buf[i]);
 	}
 }
 #endif
@@ -89,7 +100,7 @@ SwapHeader (NoffHeader * noffH)
 //
 //      Assumes that the object code file is in NOFF format.
 //
-//      First, set up the translation from program memory to physical 
+//      First, set up the translatinitUserThread();ion from program memory to physical 
 //      memory.  For now, this is really simple (1:1), since we are
 //      only uniprogramming, and we have a single unsegmented page table
 //
@@ -112,7 +123,40 @@ AddrSpace::AddrSpace (OpenFile * executable)
     // to leave room for the stack
     numPages = divRoundUp (size, PageSize);
     size = numPages * PageSize;
+    
+#ifdef CHANGED
 
+    DEBUG ('a', "Initializing address space, num pages %d, size %d\n",
+	   numPages, size);
+// first, set up the translation 
+    pageTable = new TranslationEntry[numPages];
+    int numpage;
+    //printf("Page Table Adr %x\n",(int)pageTable);
+    for (i = 0; i < numPages; i++)
+      {
+	  pageTable[i].virtualPage = i;
+	  numpage=FP->GetEmptyFrame();
+	  if(numpage!=-1){
+		  pageTable[i].physicalPage = numpage ;
+		  pageTable[i].valid = TRUE;
+	  }
+	  else{
+	 	  pageTable[i].physicalPage = -1; 
+		  pageTable[i].valid = FALSE;  
+	  }
+	  pageTable[i].use = FALSE;
+	  pageTable[i].dirty = FALSE;
+	  pageTable[i].readOnly = FALSE;	// if the code segment was entirely on 
+	  // a separate page, we could set its 
+	  // pages to be read-only
+      }
+
+// zero out the entire address space, to zero the unitialized data segment 
+// and the stack segment
+    //bzero (machine->mainMemory, size);
+
+	RestoreState();
+#else
     ASSERT (numPages <= NumPhysPages);	// check we're not trying
     // to run anything too big --
     // at least until we have
@@ -137,10 +181,8 @@ AddrSpace::AddrSpace (OpenFile * executable)
 // zero out the entire address space, to zero the unitialized data segment 
 // and the stack segment
     bzero (machine->mainMemory, size);
-    
-    #ifdef CHANGED
-	RestoreState();
-	#endif
+#endif  
+
 
 // then, copy in the code and data segments into memory
     if (noffH.code.size > 0){
@@ -157,7 +199,7 @@ AddrSpace::AddrSpace (OpenFile * executable)
 		ReadAtVirtual(executable, noffH.initData.virtualAddr,noffH.initData.size,noffH.initData.inFileAddr,pageTable,numPages);   
 		#endif
 	}
-      
+     
 
 }
 

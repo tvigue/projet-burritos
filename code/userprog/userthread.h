@@ -11,6 +11,7 @@
 	extern void initUserThread();
 	extern void do_UserThreadWait();
 	extern void do_UserThreadJoin(int n);
+	extern void do_ForkExec(int n);
 
 
 #endif
