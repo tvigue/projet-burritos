@@ -31,6 +31,7 @@ StartProcess (char *filename)
 {
     OpenFile *executable = fileSystem->Open (filename);
     AddrSpace *space;
+    
 
     if (executable == NULL)
       {
@@ -43,8 +44,8 @@ StartProcess (char *filename)
     space->InitRegisters ();	// set the initial register values
     space->RestoreState ();	// load page table register
 	#ifdef CHANGED
-	initUserThread();
 	initUserSem();
+	initUserProcessus();
 	#endif
     machine->Run ();		// jump to the user progam
     ASSERT (FALSE);		// machine->Run never returns;
