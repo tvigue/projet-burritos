@@ -125,6 +125,7 @@ AddrSpace::AddrSpace (OpenFile * executable)
     size = numPages * PageSize;
     
 #ifdef CHANGED
+    if((int)numPages<=(FP->NumAvailFrame())){
 
     DEBUG ('a', "Initializing address space, num pages %d, size %d\n",
 	   numPages, size);
@@ -156,6 +157,20 @@ AddrSpace::AddrSpace (OpenFile * executable)
     //bzero (machine->mainMemory, size);
 
 	RestoreState();
+	
+	//Creation de la bitmap unique à chaque processus
+	int nbits=UserStackSize-16-(PageSize*3);
+	nbits=nbits/(PageSize*3);
+	map = new BitMap(nbits);
+	//Creation de la table des threads
+	Threads= new int[nbits];
+	int j;
+	for(j=0;j<nbits;j++){
+		Threads[j]=-1;
+	}
+	mutex = new Lock("verrou");
+	join = new Condition("condition");
+}
 #else
     ASSERT (numPages <= NumPhysPages);	// check we're not trying
     // to run anything too big --
@@ -208,6 +223,21 @@ unsigned int AddrSpace::getNumPages(){
     return numPages;
 }
 
+BitMap * AddrSpace::getBitmap(){
+	return map;
+}
+
+int * AddrSpace::getThreads(){
+	return Threads;
+}
+
+Condition * AddrSpace::getCond(){
+	return join;
+}
+
+Lock * AddrSpace::getMutex(){
+	return mutex;
+}
 #endif
 
 //----------------------------------------------------------------------

@@ -6,16 +6,17 @@
 #include "userthread.h"
 #include "addrspace.h"
 #include "system.h"
-#include "bitmap.h"
 #include "argument.h"
-#include "synch.h"
+#define MAX_PROCESSUS 20
 
-static BitMap * map;
-static int * Threads;
-static Condition *join;
-static Lock *mutex;
+
 static int ret;
-static int Ids;
+static int ThID=0;
+static BitMap * map;
+static int * Processus;
+static int PrID=0;
+static Condition * join;
+static Lock * mutex;
 
 static void StartUserThread(Argument * f){
 	int i;
@@ -55,12 +56,16 @@ static void StartUserProcess(Argument * f){
 	  return;
       }
     space = new AddrSpace (executable);
-    currentThread->space = space;
-    delete executable;		// close file
-    space->InitRegisters ();	// set the initial register values
-    space->RestoreState ();	// load page table register
-    machine->Run ();		// jump to the user progam
-	
+    if(space->getBitmap()!=NULL){//if not enough space the bitmap is not allocated
+		currentThread->space = space;
+		delete executable;		// close file
+		space->InitRegisters ();	// set the initial register values
+		space->RestoreState ();	// load page table register
+		machine->Run ();		// jump to the user progam
+	}
+	else{//and so we have to clear the bitmap of the process
+	do_UserProcessusExit();
+	}	
 }
 
 int do_UserThreadCreate(int f, int arg) {
@@ -68,17 +73,17 @@ int do_UserThreadCreate(int f, int arg) {
 	Thread *t;
 	int indexmap;	
 	// create thread
-	indexmap=map->Find();
+	indexmap=currentThread->space->getBitmap()->Find();
 	if(indexmap!=-1){
-		mutex->Acquire();
-	    Threads[indexmap]=++Ids;
+		currentThread->space->getMutex()->Acquire();
+	    currentThread->space->getThreads()[indexmap]=++ThID;
 		//structure special argument
 		Argument * argu=new Argument(f,arg);
 		t = new Thread("thread user",indexmap);
-		t->setID(Ids);
-		mutex->Release();
+		t->setID(ThID);
+		currentThread->space->getMutex()->Release();
 		t->Fork(StartUserThread,argu);
-		return Ids;
+		return ThID;
 	}else{
 		DEBUG('t',"Not enought Space for new thread\n");
 		return -1;
@@ -86,31 +91,38 @@ int do_UserThreadCreate(int f, int arg) {
 }
 
 void do_UserThreadExit() {
-	mutex->Acquire();
-	Threads[currentThread->getBitMap()]=-1;
-	map->Clear(currentThread->getBitMap());
-	join->Broadcast(mutex);
-	mutex->Release();
-	currentThread->Finish();	
+	currentThread->space->getMutex()->Acquire();
+	currentThread->space->getThreads()[currentThread->getBitMap()]=-1;
+	currentThread->space->getBitmap()->Clear(currentThread->getBitMap());
+	currentThread->space->getCond()->Broadcast(currentThread->space->getMutex());
+	currentThread->space->getMutex()->Release();
+	currentThread->Finish();
+	delete threadToBeDestroyed;	
 }
 
-void initUserThread() {
-	int nbits=UserStackSize-16-(PageSize*3);
-	nbits=nbits/(PageSize*3);
-	map = new BitMap(nbits);
-	mutex = new Lock("verrou");
-	join = new Condition("condition");
-	Threads= new int[nbits];
-	for(Ids=0;Ids<nbits;Ids++){
-		Threads[Ids]=-1;
+void do_UserProcessusExit(){
+	mutex->Acquire();
+	if(currentThread->getBitMap()!=-1){
+		Processus[currentThread->getBitMap()]=-1;
+		map->Clear(currentThread->getBitMap());
 	}
-	Ids=0;
+	join->Broadcast(mutex);
+	mutex->Release();
 }
+
+void do_UserProcessusWait(){
+	mutex->Acquire();
+	while(!map->CheckClear()){
+		join->Wait(mutex);
+	}
+	mutex->Release();
+}
+
 
 int CheckThreads(int id){
 	int i,j=-1;
-	for(i=0;i<map->getNumBits();i++){
-		if (Threads[i]==id){
+	for(i=0;i<currentThread->space->getBitmap()->getNumBits();i++){
+		if (currentThread->space->getThreads()[i]==id){
 			j=i;
 			break;
 		}
@@ -120,31 +132,47 @@ int CheckThreads(int id){
 }
 
 void do_UserThreadWait() {
-	mutex->Acquire();
-	while(!map->CheckClear()){
-		join->Wait(mutex);
+	currentThread->space->getMutex()->Acquire();
+	while(!currentThread->space->getBitmap()->CheckClear()){
+		currentThread->space->getCond()->Wait(currentThread->space->getMutex());
 	}
-	mutex->Release();
+	currentThread->space->getMutex()->Release();
 
 }
 
 void do_UserThreadJoin(int n) {
-	mutex->Acquire();
+	currentThread->space->getMutex()->Acquire();
 	int i=CheckThreads(n);
 	if(i!=-1){
-		while(map->Test(i)){
-			join->Wait(mutex);
+		while(currentThread->space->getBitmap()->Test(i)){
+			currentThread->space->getCond()->Wait(currentThread->space->getMutex());
 		}
 	}
-	mutex->Release();
+	currentThread->space->getMutex()->Release();
 }
 
 void do_ForkExec(int n){
 
+    int indexproc=map->Find();
+    if(indexproc!=-1){
+		Processus[indexproc]=++PrID;
 	Thread *t;
-	t=new Thread("mainFork",-1);
+	t=new Thread("mainFork",indexproc);
 	Argument * arg =new Argument(0,n);
 	t->Fork(StartUserProcess,arg);
+    }
+    else{
+    	printf("Not Enought Space Fork\n");
+    
+    }
+}
+
+
+void initUserProcessus(){
+    map=new BitMap(MAX_PROCESSUS);
+    Processus=new int[MAX_PROCESSUS];
+    mutex=new Lock("verrou");
+    join=new Condition("condition");
 }
 
 

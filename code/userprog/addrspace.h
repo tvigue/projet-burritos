@@ -15,6 +15,10 @@
 
 #include "copyright.h"
 #include "filesys.h"
+#ifdef CHANGED
+#include "bitmap.h"
+#include "synch.h"
+#endif
 
 #define UserStackSize		2048	// increase this as necessary!
 
@@ -33,6 +37,10 @@ class AddrSpace
     void RestoreState ();	// info on a context switch 
 #ifdef CHANGED
     unsigned int getNumPages();
+    BitMap * getBitmap();
+    int * getThreads();
+    Condition * getCond();
+    Lock * getMutex();
 #endif
 
   private:
@@ -40,6 +48,12 @@ class AddrSpace
     // for now!
     unsigned int numPages;	// Number of pages in the virtual 
     // address space 
+#ifdef CHANGED    
+     BitMap * map;
+     int * Threads;
+     Condition * join;
+	 Lock * mutex;
+#endif
 };
 
 #endif // ADDRSPACE_H

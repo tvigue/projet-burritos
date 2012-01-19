@@ -2,10 +2,8 @@
 
 int main()
 {
+	ForkExec("build/step3_testJoin2");
 	ForkExec("build/putstring");
-	ForkExec("build/putchar");
-	int i;
-	for(i=0;i<100000000;i++);
 	Exit(0);
 	
 }

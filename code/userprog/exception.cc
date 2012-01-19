@@ -188,6 +188,10 @@ void ExceptionHandler(ExceptionType which) {
 				do_UserThreadWait();
 				//del semaphores user
 				delUserSem();
+				//Exit Processus
+				do_UserProcessusExit();
+				//Wait Processus
+				do_UserProcessusWait();
 				interrupt->Halt();
 				break;
 			}
