@@ -94,7 +94,7 @@ main (int argc, char **argv)
     (void) Initialize (argc, argv);
     
 #ifdef CHANGED
-FP=new FrameProvider();
+	FP=new FrameProvider();
 #endif
 
 #ifdef THREADS
