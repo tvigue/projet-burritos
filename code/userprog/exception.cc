@@ -156,11 +156,6 @@ void ExceptionHandler(ExceptionType which) {
 				break;
 			}
 			
-			case SC_UserThreadJoin: {
-				n=machine->ReadRegister(4);
-				do_UserThreadJoin(n);
-				break;
-			}
 			
 			case SC_UserSemCreate: {
 				entier = machine->ReadRegister(4);
