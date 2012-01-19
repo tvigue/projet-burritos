@@ -17,7 +17,7 @@ main ()
 	  Write (prompt, 2, output);
 
 	  i = 0;
-
+	  
 	  do
 	    {
 
