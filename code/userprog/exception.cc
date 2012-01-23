@@ -29,7 +29,9 @@
 #include "userthread.h"
 #include "usersem.h"
 
-
+#ifdef CHANGED
+static Lock * mutex;
+#endif
 //----------------------------------------------------------------------
 // UpdatePC : Increments the Program Counter register in order to resume
 // the user program immediately after the "syscall" instruction.
@@ -89,99 +91,128 @@ void ExceptionHandler(ExceptionType which) {
     char ch;
     int n = 0;
     int entier;
+    mutex= new Lock("SC");
     
     if(which == SyscallException){
     	switch(type){
 			case SC_Halt:{
+				mutex->Acquire();
 				DEBUG ('a', "Shutdown, initiated by user program.\n");
 		  		interrupt->Halt();
+		  		mutex->Release();
 		 		break;
 		  	}
 		  		
 		  	case SC_PutChar:{
+		  		mutex->Acquire();
 		  		synchconsole->SynchPutChar(machine->ReadRegister(4));
+		  		mutex->Release();
 		  		break;
 	 		}
 	 		
 	 		case SC_PutString:{
+	 			mutex->Acquire();
 	 			adr = machine->ReadRegister (4);
 		  		synchconsole->copyStringFromMachine(adr,buf,MAX_STRING_SIZE);
 		  		synchconsole->SynchPutString(buf);
+		  		mutex->Release();
 		  		break;
 	 		}
 	 		
 	 		case SC_PutInt:{
+	 			mutex->Acquire();
 	 			entier = machine->ReadRegister (4);
 				synchconsole->SynchPutInt(entier);
+				mutex->Release();
 		  		break;
 	 		}
 	 		
 	 		case SC_GetChar:{
+	 			mutex->Acquire();
 				ch = synchconsole->SynchGetChar();
 				machine->WriteRegister(2,(int)ch);
 				break;
 	 		}
 	 		
 	 		case SC_GetString:{
+	 			mutex->Acquire();
 				adr = machine->ReadRegister (4);
 				n = machine->ReadRegister (5);
 				synchconsole->SynchGetString(buf,n);
 				synchconsole->copyStringToMachine(adr,buf,n);
+				mutex->Release();
 				break;
 	 		}
 	 		
 	 		case SC_GetInt:{
+	 			mutex->Acquire();
 				adr = machine->ReadRegister(4);
 				synchconsole->SynchGetInt(&entier);
 				machine->WriteMem(adr,1,entier);
+				mutex->Release();
 				break;
 	 		}
 			
 			case SC_UserThreadCreate: {
+				mutex->Acquire();
 				adr = machine->ReadRegister(4);
 				adr2 = machine->ReadRegister(5);
 				entier = machine->ReadRegister(6);
 				n = do_UserThreadCreate(adr,adr2);
 				machine->WriteRegister(2,(int) n);
+				mutex->Release();
 				break;
 			}
 			
 			case SC_UserThreadExit: {
+				mutex->Acquire();
 				do_UserThreadExit();
+				mutex->Release();
 				break;
 			}
 			
 			case SC_UserThreadWait: {
+				mutex->Acquire();
 				do_UserThreadWait();
+				mutex->Release();
 				break;
 			}
 
-			case SC_UserThreadJoin: {		
+			case SC_UserThreadJoin: {
+				mutex->Acquire();		
 					n=machine->ReadRegister(4);		
-					do_UserThreadJoin(n);		
+					do_UserThreadJoin(n);
+					mutex->Release();		
 					break;		
 			}
 			
 			case SC_UserSemCreate: {
+				mutex->Acquire();
 				entier = machine->ReadRegister(4);
 				n = do_UserSemCreate(entier);
 				machine->WriteRegister(2,(int) n);
+				mutex->Release();
 				break;
 			}
 			
 			case SC_UserSemPost: {
+				mutex->Acquire();
 				n = machine->ReadRegister(4);
 				do_UserSemPost(n);
+				mutex->Release();
 				break;
 			}
 			
 			case SC_UserSemWait: {
+				mutex->Acquire();
 				n = machine->ReadRegister(4);
 				do_UserSemWait(n);
+				mutex->Release();
 				break;
 			}
 	 		
 	 		case SC_Exit: {
+	 			mutex->Acquire();
 	 			//codeExit  = machine->ReadRegister(4);
 				DEBUG('a', "Shutdown, initiated by user program.\n");
 				DEBUG('t', "Wait users threads.\n");
@@ -191,15 +222,21 @@ void ExceptionHandler(ExceptionType which) {
 				//Exit Processus
 				do_UserProcessusExit();
 				//Wait Processus
-				do_UserProcessusWait();
-				interrupt->Halt();
+				if(currentThread->getBitMap()==-1){
+					do_UserProcessusWait();
+					interrupt->Halt();
+				}
+				mutex->Release();
 				break;
 			}
 			
 			case SC_ForkExec: {
+				mutex->Acquire();
 				n=machine->ReadRegister(4);
 				do_ForkExec(n);
+				mutex->Release();
 				break;
+				
 			}
 		
   		
