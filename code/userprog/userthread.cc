@@ -17,6 +17,7 @@ static int * Processus;
 static int PrID=0;
 static Condition * join;
 static Lock * mutex;
+static bool b;
 
 static void StartUserThread(Argument * f){
 	int i;
@@ -107,6 +108,8 @@ void do_UserProcessusExit(){
 		//currentThread->Print();
 		Processus[currentThread->getBitMap()]=-1;
 		map->Clear(currentThread->getBitMap());
+	}else{
+		b=false;
 	}
 	join->Broadcast(mutex);
 	mutex->Release();
@@ -114,7 +117,7 @@ void do_UserProcessusExit(){
 
 void do_UserProcessusWait(){
 	mutex->Acquire();
-	while(!map->CheckClear()){
+	while(!map->CheckClear()||b){
 		//printf("WAIT");
 		//currentThread->Print();
 		join->Wait(mutex);
@@ -182,6 +185,7 @@ void initUserProcessus(){
     Processus=new int[MAX_PROCESSUS];
     mutex=new Lock("verrou");
     join=new Condition("condition");
+    b=true;
 }
 
 
