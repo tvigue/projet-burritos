@@ -127,51 +127,49 @@ AddrSpace::AddrSpace (OpenFile * executable)
 #ifdef CHANGED
 	//printf("COMPARE PAGES %i <= %i\n",(int)numPages,FP->NumAvailFrame());
     if((int)numPages<=FP->NumAvailFrame()){
-
-    DEBUG ('a', "Initializing address space, num pages %d, size %d\n",
+	    DEBUG ('a', "Initializing address space, num pages %d, size %d\n",
 	   numPages, size);
-// first, set up the translation 
-    pageTable = new TranslationEntry[numPages];
-    int numpage;
-    //printf("Page Table Adr %x\n",(int)pageTable);
-    for (i = 0; i < numPages; i++)
-      {
-	  pageTable[i].virtualPage = i;
-	  numpage=FP->GetEmptyFrame();
-	  if(numpage!=-1){
-		  pageTable[i].physicalPage = numpage ;
-		  pageTable[i].valid = TRUE;
-	  }
-	  else{
-	 	  pageTable[i].physicalPage = -1; 
-		  pageTable[i].valid = FALSE;  
-	  }
-	  pageTable[i].use = FALSE;
-	  pageTable[i].dirty = FALSE;
-	  pageTable[i].readOnly = FALSE;	// if the code segment was entirely on 
-	  // a separate page, we could set its 
-	  // pages to be read-only
-      }
+		// first, set up the translation 
+	    pageTable = new TranslationEntry[numPages];
+	    int numpage;
+	    //printf("Page Table Adr %x\n",(int)pageTable);
+	    for (i = 0; i < numPages; i++){
+	  		pageTable[i].virtualPage = i;
+	  		numpage=FP->GetEmptyFrame();
+	  		if(numpage!=-1){
+		  		pageTable[i].physicalPage = numpage ;
+		  		pageTable[i].valid = TRUE;
+	  			}
+	  		else{
+	 	  		pageTable[i].physicalPage = -1; 
+		  		pageTable[i].valid = FALSE;  
+	  		}
+	  		pageTable[i].use = FALSE;
+	  		pageTable[i].dirty = FALSE;
+	  		pageTable[i].readOnly = FALSE;	// if the code segment was entirely on 
+	  		// a separate page, we could set its 
+	  		// pages to be read-only
+      	}
 
-// zero out the entire address space, to zero the unitialized data segment 
-// and the stack segment
+	// zero out the entire address space, to zero the unitialized data segment 
+	// and the stack segment
     //bzero (machine->mainMemory, size);
 
-	RestoreState();
+		RestoreState();
 	
-	//Creation de la bitmap unique à chaque processus
-	int nbits=UserStackSize-16-(PageSize*3);
-	nbits=nbits/(PageSize*3);
-	map = new BitMap(nbits);
-	//Creation de la table des threads
-	Threads= new int[nbits];
-	int j;
-	for(j=0;j<nbits;j++){
-		Threads[j]=-1;
+		//Creation de la bitmap unique à chaque processus
+		int nbits=UserStackSize-16-(PageSize*3);
+		nbits=nbits/(PageSize*3);
+		map = new BitMap(nbits);
+		//Creation de la table des threads
+		Threads= new int[nbits];
+		int j;
+		for(j=0;j<nbits;j++){
+			Threads[j]=-1;
+		}
+		mutex = new Lock("verrou");
+		join = new Condition("condition");
 	}
-	mutex = new Lock("verrou");
-	join = new Condition("condition");
-}
 #else
     ASSERT (numPages <= NumPhysPages);	// check we're not trying
     // to run anything too big --
