@@ -127,7 +127,7 @@ class Thread
     void Print ()
     {
 #ifdef CHANGED
-	printf ("%s PID %i, ", name,bitmapspace);
+	printf ("%s PID %i, ", name,threadid);
 #else
 	printf ("%s, ", name);
 #endif

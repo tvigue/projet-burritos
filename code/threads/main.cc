@@ -96,10 +96,6 @@ main (int argc, char **argv)
 	FP=new FrameProvider();
 #endif
 
-#ifdef THREADS
-    ThreadTest ();
-#endif
-
     for (argc--, argv++; argc > 0; argc -= argCount, argv += argCount)
       {
 	  argCount = 1;

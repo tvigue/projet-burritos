@@ -41,6 +41,7 @@ class AddrSpace
     int * getThreads();
     Condition * getCond();
     Lock * getMutex();
+    void ClearPhysicalMemory();
 #endif
 
   private:

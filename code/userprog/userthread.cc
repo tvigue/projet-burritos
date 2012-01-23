@@ -17,7 +17,6 @@ static int * Processus;
 static int PrID=0;
 static Condition * join;
 static Lock * mutex;
-static bool b;
 
 static void StartUserThread(Argument * f){
 	int i;
@@ -47,6 +46,7 @@ static void StartUserThread(Argument * f){
 
 static void StartUserProcess(Argument * f){
 	char * buf = new char[MAX_STRING_SIZE];
+	mutex->Acquire();
 	synchconsole->copyStringFromMachine(f->getArgs(),buf,MAX_STRING_SIZE);
 	OpenFile *executable = fileSystem->Open (buf);
     AddrSpace *space;
@@ -57,6 +57,7 @@ static void StartUserProcess(Argument * f){
 	  return;
       }
     space = new AddrSpace (executable);
+    mutex->Release();
     if(space->getBitmap()!=NULL){//if not enough space the bitmap is not allocated
 		currentThread->space = space;
 		delete executable;		// close file
@@ -66,7 +67,9 @@ static void StartUserProcess(Argument * f){
 	}
 	else{//and so we have to clear the bitmap of the process
 	do_UserProcessusExit();
-	}	
+	do_UserProcessusWait();
+	}
+		
 }
 
 int do_UserThreadCreate(int f, int arg) {
@@ -97,37 +100,26 @@ void do_UserThreadExit() {
 	currentThread->space->getBitmap()->Clear(currentThread->getBitMap());
 	currentThread->space->getCond()->Broadcast(currentThread->space->getMutex());
 	currentThread->space->getMutex()->Release();
-	currentThread->Finish();
-	delete threadToBeDestroyed;	
+	currentThread->Finish();	
 }
 
 void do_UserProcessusExit(){
 	mutex->Acquire();
 	if(currentThread->getBitMap()!=-1){
-		//printf("EXIT");
-		//currentThread->Print();
 		Processus[currentThread->getBitMap()]=-1;
 		map->Clear(currentThread->getBitMap());
-	}else{
-		b=false;
+		//Clear physical memory pages through Addrspace Table Page
+		//currentThread->space->ClearPhysicalMemory();
+		join->Broadcast(mutex);
 	}
-	join->Broadcast(mutex);
 	mutex->Release();
 }
 
 void do_UserProcessusWait(){
 	mutex->Acquire();
-	while(!map->CheckClear()||b){
-		//printf("WAIT");
-		//currentThread->Print();
+	while(!map->CheckClear()){
 		join->Wait(mutex);
 	}
-	/*printf("WAIT POST \n");
-	currentThread->Print();
-	if(currentThread->getBitMap()!=-1){
-		currentThread->Finish();
-		delete threadToBeDestroyed;
-	}*/
 	mutex->Release();
 }
 
@@ -165,14 +157,14 @@ void do_UserThreadJoin(int n) {
 }
 
 void do_ForkExec(int n){
-
     int indexproc=map->Find();
     if(indexproc!=-1){
 		Processus[indexproc]=++PrID;
-	Thread *t;
-	t=new Thread("mainFork",indexproc);
-	Argument * arg =new Argument(0,n);
-	t->Fork(StartUserProcess,arg);
+		Thread *t;
+		t=new Thread("mainFork",indexproc);
+		t->setID(PrID);
+		Argument * arg =new Argument(0,n);
+		t->Fork(StartUserProcess,arg);
     }
     else{
     	printf("Not Enought Space Fork\n");
@@ -185,7 +177,6 @@ void initUserProcessus(){
     Processus=new int[MAX_PROCESSUS];
     mutex=new Lock("verrou");
     join=new Condition("condition");
-    b=true;
 }
 
 
