@@ -54,7 +54,6 @@ Console::Console(char *readFile, char *writeFile, VoidFunctionPtr readAvail,
     handlerArg = callArg;
     putBusy = FALSE;
     incoming = EOF;
-
     // start polling for incoming packets
     interrupt->Schedule(ConsoleReadPoll, (int)this, ConsoleTime, ConsoleReadInt);
 }
@@ -88,7 +87,6 @@ Console::CheckCharAvail()
 {
     char c;
     int n;
-
     // schedule the next time to poll for a packet
     interrupt->Schedule(ConsoleReadPoll, (int)this, ConsoleTime, 
 			ConsoleReadInt);

@@ -89,9 +89,8 @@ main (int argc, char **argv)
 {
     int argCount;		// the number of arguments 
     // for a particular command
-
-    DEBUG ('t', "Entering main");
     (void) Initialize (argc, argv);
+    DEBUG ('t', "Entering main\n");
     
 #ifdef CHANGED
 	FP=new FrameProvider();
@@ -110,6 +109,9 @@ main (int argc, char **argv)
 	  if (!strcmp (*argv, "-x"))
 	    {			// run a user program
 		ASSERT (argc > 1);
+		#ifdef CHANGED
+		synchconsole=new SynchConsole(NULL,NULL);
+		#endif
 		StartProcess (*(argv + 1));
 		argCount = 2;
 	    }

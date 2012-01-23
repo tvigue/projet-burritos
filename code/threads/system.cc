@@ -135,7 +135,7 @@ Initialize (int argc, char **argv)
 	    {
 		ASSERT (argc > 1);
 		netname = atoi (*(argv + 1));
-		argCount = 2;
+		argCount = 2;	threadToBeDestroyed->Finish();
 	    }
 #endif
       }
@@ -164,9 +164,6 @@ Initialize (int argc, char **argv)
 
 #ifdef USER_PROGRAM
     machine = new Machine (debugUserProg);	// this must come first
-    #ifdef CHANGED
-    synchconsole=new SynchConsole(NULL,NULL);
-	#endif
 #endif
 
 #ifdef FILESYS

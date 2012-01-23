@@ -126,7 +126,12 @@ class Thread
     }
     void Print ()
     {
+#ifdef CHANGED
+	printf ("%s PID %i, ", name,bitmapspace);
+#else
 	printf ("%s, ", name);
+#endif
+
     }
 
   private:
