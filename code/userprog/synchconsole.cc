@@ -8,6 +8,7 @@ static Semaphore *readAvail;
 static Semaphore *writeDone;
 static Lock *writeMutex;
 static Lock *readMutex;
+static Lock *stringCopy;
 
 static void ReadAvail(int arg) { 
 	readAvail->V(); 
@@ -22,6 +23,7 @@ SynchConsole::SynchConsole(char *readFile, char *writeFile) {
 	writeDone = new Semaphore("write done", 0);
 	writeMutex = new Lock("write mutex");
 	readMutex = new Lock("read mutex");
+	stringCopy = new Lock("string copy");
 	console = new Console(readFile,writeFile,ReadAvail,WriteDone,0);
 }
 
@@ -83,6 +85,7 @@ void SynchConsole::SynchGetInt(int *n){
 }
 
 void SynchConsole::copyStringFromMachine(int from, char *to, unsigned size){
+    stringCopy->Acquire();
 	int value;
 	unsigned i = 0;
 	
@@ -98,9 +101,11 @@ void SynchConsole::copyStringFromMachine(int from, char *to, unsigned size){
 		}
 	}
 	to[i] = '\0';
+	stringCopy->Release();
 }
 
 void SynchConsole::copyStringToMachine(int adr, char *in, unsigned size){
+	stringCopy->Acquire();
 	int value;
 	unsigned int i;
 	for(i =0;i<size-1 && in[i] != '\0';i++){
@@ -108,6 +113,7 @@ void SynchConsole::copyStringToMachine(int adr, char *in, unsigned size){
 		machine->WriteMem(adr+i,1,value);
 	}
 	machine->WriteMem(adr+i,1,'\0');
+	stringCopy->Release();
 }
 
 #endif // CHANGED

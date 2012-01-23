@@ -45,7 +45,7 @@ static void StartUserThread(Argument * f){
 }
 
 static void StartUserProcess(Argument * f){
-	char buf[MAX_STRING_SIZE];
+	char * buf = new char[MAX_STRING_SIZE];
 	synchconsole->copyStringFromMachine(f->getArgs(),buf,MAX_STRING_SIZE);
 	OpenFile *executable = fileSystem->Open (buf);
     AddrSpace *space;
@@ -103,6 +103,8 @@ void do_UserThreadExit() {
 void do_UserProcessusExit(){
 	mutex->Acquire();
 	if(currentThread->getBitMap()!=-1){
+		//printf("EXIT");
+		//currentThread->Print();
 		Processus[currentThread->getBitMap()]=-1;
 		map->Clear(currentThread->getBitMap());
 	}
@@ -113,8 +115,16 @@ void do_UserProcessusExit(){
 void do_UserProcessusWait(){
 	mutex->Acquire();
 	while(!map->CheckClear()){
+		//printf("WAIT");
+		//currentThread->Print();
 		join->Wait(mutex);
 	}
+	/*printf("WAIT POST \n");
+	currentThread->Print();
+	if(currentThread->getBitMap()!=-1){
+		currentThread->Finish();
+		delete threadToBeDestroyed;
+	}*/
 	mutex->Release();
 }
 
@@ -163,7 +173,6 @@ void do_ForkExec(int n){
     }
     else{
     	printf("Not Enought Space Fork\n");
-    
     }
 }
 
