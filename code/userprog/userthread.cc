@@ -54,20 +54,22 @@ static void StartUserProcess(Argument * f){
     if (executable == NULL)
       {
 	  printf ("Unable to open file %s\n",buf);
+	  mutex->Release();
 	  return;
       }
     space = new AddrSpace (executable);
-    mutex->Release();
     if(space->getBitmap()!=NULL){//if not enough space the bitmap is not allocated
 		currentThread->space = space;
 		delete executable;		// close file
 		space->InitRegisters ();	// set the initial register values
 		space->RestoreState ();	// load page table register
+		mutex->Release();
 		machine->Run ();		// jump to the user progam
 	}
-	else{//and so we have to clear the bitmap of the process
-	do_UserProcessusExit();
-	do_UserProcessusWait();
+	else{//and sdo we have to clear the bitmap of the process
+		currentThread->space=NULL;
+		mutex->Release();
+		do_UserProcessusExit();
 	}
 		
 }
@@ -104,15 +106,20 @@ void do_UserThreadExit() {
 }
 
 void do_UserProcessusExit(){
-	mutex->Acquire();
+	
 	if(currentThread->getBitMap()!=-1){
+		mutex->Acquire();
 		Processus[currentThread->getBitMap()]=-1;
 		map->Clear(currentThread->getBitMap());
 		//Clear physical memory pages through Addrspace Table Page
-		//currentThread->space->ClearPhysicalMemory();
+		if(currentThread->space!=NULL){
+			currentThread->space->ClearPhysicalMemory();
+		}
 		join->Broadcast(mutex);
-	}
-	mutex->Release();
+		mutex->Release();
+		currentThread->Finish();
+	}		
+s
 }
 
 void do_UserProcessusWait(){
@@ -157,6 +164,7 @@ void do_UserThreadJoin(int n) {
 }
 
 void do_ForkExec(int n){
+	mutex->Acquire();
     int indexproc=map->Find();
     if(indexproc!=-1){
 		Processus[indexproc]=++PrID;
@@ -164,9 +172,11 @@ void do_ForkExec(int n){
 		t=new Thread("mainFork",indexproc);
 		t->setID(PrID);
 		Argument * arg =new Argument(0,n);
+		mutex->Release();
 		t->Fork(StartUserProcess,arg);
     }
     else{
+		mutex->Release();
     	printf("Not Enought Space Fork\n");
     }
 }

@@ -125,6 +125,7 @@ AddrSpace::AddrSpace (OpenFile * executable)
     size = numPages * PageSize;
     
 #ifdef CHANGED
+	map=NULL;
     if((int)numPages<=FP->NumAvailFrame()){
 	    DEBUG ('a', "Initializing address space, num pages %d, size %d\n",
 	   numPages, size);
@@ -320,6 +321,9 @@ AddrSpace::RestoreState ()
     machine->pageTable = pageTable;
     machine->pageTableSize = numPages;
 }
+
+
+
 #ifdef CHANGED
 void AddrSpace::ClearPhysicalMemory(){
 	int i=0;
