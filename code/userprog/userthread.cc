@@ -114,12 +114,12 @@ void do_UserProcessusExit(){
 		//Clear physical memory pages through Addrspace Table Page
 		if(currentThread->space!=NULL){
 			currentThread->space->ClearPhysicalMemory();
+			
 		}
 		join->Broadcast(mutex);
 		mutex->Release();
 		currentThread->Finish();
-	}		
-s
+	}
 }
 
 void do_UserProcessusWait(){
