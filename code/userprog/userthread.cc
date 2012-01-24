@@ -53,8 +53,10 @@ static void StartUserProcess(Argument * f){
 
     if (executable == NULL)
       {
-	  printf ("Unable to open file %s\n",buf);
-	  mutex->Release();
+		DEBUG('t',"Unable to open file %s\n",buf);
+		currentThread->space=NULL;
+		mutex->Release();
+		do_UserProcessusExit();
 	  return;
       }
     space = new AddrSpace (executable);
