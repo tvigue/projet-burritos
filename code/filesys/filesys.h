@@ -76,6 +76,8 @@ class FileSystem {
 
     bool Create(const char *name, int initialSize);  	
 					// Create a file (UNIX creat)
+	bool CreateDir(const char *name, int initialSize);
+	bool ChangeDir(const char *name);
 
     OpenFile* Open(const char *name); 	// Open a file (UNIX open)
 
@@ -90,6 +92,9 @@ class FileSystem {
 					// represented as a file
    OpenFile* directoryFile;		// "Root" directory -- list of 
 					// file names, represented as a file
+   #ifdef CHANGED
+   int currentdir; //secteur associé au directoryFile
+   #endif //CHANGD
 };
 
 #endif // FILESYS

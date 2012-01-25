@@ -37,6 +37,13 @@
 
 class FileHeader {
   public:
+#ifdef CHANGED
+	void setdatasector(int i,int sector);
+	int getdatasector(int i);
+	void setsize(int i);
+	int getsize();
+	
+#endif
     bool Allocate(BitMap *bitMap, int fileSize);// Initialize a file header, 
 						//  including allocating space 
 						//  on disk for the file data

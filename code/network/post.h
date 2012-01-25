@@ -32,7 +32,7 @@
 #include "synchlist.h"
 
 #ifdef CHANGED
-//#include "thread.h"
+#include "thread.h"
 #endif
 
 // Mailbox address -- uniquely identifies a mailbox on a given machine.
