@@ -51,6 +51,10 @@
 #include "filehdr.h"
 #include "filesys.h"
 
+#ifdef CHANGED
+#include "sysdep.h"
+#endif //CHANGED
+
 // Sectors containing the file headers for the bitmap of free sectors,
 // and the directory of files.  These file headers are placed in well-known 
 // sectors, so that they can be located on boot-up.
@@ -224,38 +228,44 @@ FileSystem::Create(const char *name, int initialSize)
 void FileSystem::PrintCurrentDirectory(){
 	Directory *directory;
 	char * buf = new char[50];
+	char * buf2 = new char[50];
 	int prevSector;
 	int sector;
 	OpenFile *tmp;
 	char *name = new char[FileNameMaxLen + 1];
+	char *slash = new char[1];
+	
+	slash[0] = '/';
 	
 	directory = new Directory(NumDirEntries);
     directory->FetchFrom(directoryFile);//current
 	
 	prevSector = currentdir;
 	
+	buf = (char *) "";
+	buf2 = (char *) "";
+	
 	sector = directory->Find("..");
 	if(sector == -1){
-		printf("/root\n");
+		printf("/root/\n");
 	} else {
 		tmp = new OpenFile(sector);
 		directory->FetchFrom(tmp); //papa
 	
 		while(sector != -1){
 			name = directory->FindName(prevSector);
-			printf("%s\n",name);
-			sprintf(buf,"%s/%s",buf,name);
-			printf("BUFF:%s\n",buf);
+			buf2 = strcat(name,slash);
+			buf = strcat(buf2,buf);
 			prevSector = sector;
 			sector = directory->Find("..");
 			if(sector == -1){
-				sprintf(buf,"/root/%s\n",buf);
+				//
 			} else {
 				tmp = new OpenFile(sector);
 				directory->FetchFrom(tmp);
 			}	
 		}
-		printf("%s\n",buf);
+		printf("/root/%s\n",buf);
 	}
 }
 
