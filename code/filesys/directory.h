@@ -31,6 +31,9 @@
 
 class DirectoryEntry {
   public:
+  	#ifdef CHANGED
+    bool isFile;
+    #endif
     bool inUse;				// Is this directory entry in use?
     int sector;				// Location on disk to find the 
 					//   FileHeader for this file 
@@ -70,9 +73,14 @@ class Directory {
     void Print();			// Verbose print of the contents
 					//  of the directory -- all the file
 					//  names and their contents.
+	#ifdef CHANGED
+	bool isFile(const char *name);
+    bool AddDir(const char *name, int newSector);
+	#endif
 
   private:
     int tableSize;			// Number of directory entries
+  
     DirectoryEntry *table;		// Table of pairs: 
 					// <file name, file header location> 
 
