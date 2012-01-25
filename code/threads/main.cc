@@ -150,6 +150,20 @@ main (int argc, char **argv)
 		Copy (*(argv + 1), *(argv + 2));
 		argCount = 3;
 	    }
+	  #ifdef CHANGED
+	  else if (!strcmp (*argv, "-cd"))
+	    {
+		ASSERT (argc > 1 );
+		fileSystem->ChangeDir(*(argv + 1));
+		argCount = 2;
+	    }
+	  else if (!strcmp (*argv, "-mk"))
+	    {
+		ASSERT (argc > 1 );
+		fileSystem->CreateDir(*(argv + 1),-1);
+		argCount = 2;
+	    }
+	 #endif //CHANGED
 	  else if (!strcmp (*argv, "-p"))
 	    {			// print a Nachos file
 		ASSERT (argc > 1);

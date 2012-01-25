@@ -64,6 +64,7 @@
 #define NumDirEntries 		10
 #define DirectoryFileSize 	(sizeof(DirectoryEntry) * NumDirEntries)
 
+
 //----------------------------------------------------------------------
 // FileSystem::FileSystem
 // 	Initialize the file system.  If format = TRUE, the disk has
@@ -79,12 +80,15 @@
 
 FileSystem::FileSystem(bool format)
 { 
+	#ifdef CHANGED
+	currentdir=DirectorySector;
+	#endif //CHANGED
     DEBUG('f', "Initializing the file system.\n");
     if (format) {
         BitMap *freeMap = new BitMap(NumSectors);
         Directory *directory = new Directory(NumDirEntries);
-	FileHeader *mapHdr = new FileHeader;
-	FileHeader *dirHdr = new FileHeader;
+		FileHeader *mapHdr = new FileHeader;
+		FileHeader *dirHdr = new FileHeader;
 
         DEBUG('f', "Formatting the file system.\n");
 
@@ -95,7 +99,8 @@ FileSystem::FileSystem(bool format)
 
     // Second, allocate space for the data blocks containing the contents
     // of the directory and bitmap files.  There better be enough space!
-
+    
+	
 	ASSERT(mapHdr->Allocate(freeMap, FreeMapFileSize));
 	ASSERT(dirHdr->Allocate(freeMap, DirectoryFileSize));
 
@@ -125,15 +130,15 @@ FileSystem::FileSystem(bool format)
 	freeMap->WriteBack(freeMapFile);	 // flush changes to disk
 	directory->WriteBack(directoryFile);
 
-	if (DebugIsEnabled('f')) {
-	    freeMap->Print();
-	    directory->Print();
+		if (DebugIsEnabled('f')) {
+			freeMap->Print();
+			directory->Print();
 
-        delete freeMap; 
-	delete directory; 
-	delete mapHdr; 
-	delete dirHdr;
-	}
+		    delete freeMap; 
+			delete directory; 
+			delete mapHdr; 
+			delete dirHdr;
+		}
     } else {
     // if we are not formatting the disk, just open the files representing
     // the bitmap and directory; these are left open while Nachos is running
@@ -195,7 +200,7 @@ FileSystem::Create(const char *name, int initialSize)
             success = FALSE;		// no free block for file header 
         else if (!directory->Add(name, sector))
             success = FALSE;	// no space in directory
-	else {
+		else {
     	    hdr = new FileHeader;
 	    if (!hdr->Allocate(freeMap, initialSize))
             	success = FALSE;	// no space on disk for data
@@ -213,6 +218,118 @@ FileSystem::Create(const char *name, int initialSize)
     delete directory;
     return success;
 }
+
+#ifdef CHANGED
+bool FileSystem::ChangeDir(const char *name){
+	FileHeader *hdr;
+	Directory *directory;
+    int sector;
+	bool success;
+	
+	success = TRUE;
+	directory = new Directory(NumDirEntries);
+    directory->FetchFrom(directoryFile);//current
+	
+	sector = directory->Find(name);
+    
+    if(sector != -1){ //find the name
+    	hdr = new FileHeader;
+    	hdr->FetchFrom(sector);
+    	if(hdr->getsize() < 0 ){ //is dir
+    		//delete directoryFile;
+    		directoryFile = Open(name);
+    		currentdir=sector;
+    	}else{
+    		success=FALSE;
+    	}
+    	delete hdr;
+    }else{
+    	success=FALSE;
+    }
+    delete directory;
+    return success;
+}
+
+
+
+//----------------------------------------------------------------------
+// FileSystem::CreateDir
+// 	Create a dir in the Nachos file system (similar to UNIX create).
+//	Since we can't increase the size of files dynamically, we have
+//	to give Create the initial size of the file.
+//
+//	Return TRUE if everything goes ok, otherwise, return FALSE.
+//
+// 	Create fails if:
+//   		file is already in directory
+//	 	no free space for file header
+//	 	no free entry for file in directory
+//	 	no free space for data blocks for the file 
+//
+// 	Note that this implementation assumes there is no concurrent access
+//	to the file system!
+//
+//	"name" -- name of file to be created
+//	"initialSize" -- size of file to be created
+//----------------------------------------------------------------------
+
+bool
+FileSystem::CreateDir(const char *name, int initialSize)
+{
+	Directory *directory;
+	Directory *newdirectory;
+	OpenFile *newdirfile;
+    BitMap *freeMap;
+    FileHeader *hdr;
+    int sector;
+    bool success;
+
+    DEBUG('f', "Creating dir %s, size %d\n", name, initialSize);
+
+    directory = new Directory(NumDirEntries);
+    directory->FetchFrom(directoryFile);
+
+    if (directory->Find(name) != -1)
+      success = FALSE;			// file is already in directory
+    else {	
+        freeMap = new BitMap(NumSectors);
+        freeMap->FetchFrom(freeMapFile);
+        sector = freeMap->Find();	// find a sector to hold the file header
+    	if (sector == -1) 		
+            success = FALSE;		// no free block for file header 
+        else if (!directory->Add(name, sector))
+            success = FALSE;	// no space in directory
+		else {
+    	    hdr = new FileHeader;
+	    	if (!hdr->Allocate(freeMap, DirectoryFileSize))
+            	success = FALSE;	// no space on disk for data
+	    	else {	
+	    		success = TRUE;
+				
+				hdr->setsize(initialSize); //-1
+
+				newdirfile = new OpenFile(sector);
+				newdirectory = new Directory(NumDirEntries);
+				newdirectory->Add(".", sector);
+				newdirectory->Add("..", currentdir);
+				newdirectory->WriteBack(newdirfile);
+				
+				
+    	    	hdr->WriteBack(sector); 		
+    	    	directory->WriteBack(directoryFile);
+    	    	freeMap->WriteBack(freeMapFile);
+	    	}
+            delete hdr;
+            delete newdirectory;
+		}
+        delete freeMap;
+    }
+    delete directory;
+    return success;
+	
+}
+#endif //CHANGED
+
 
 //----------------------------------------------------------------------
 // FileSystem::Open
@@ -296,7 +413,6 @@ void
 FileSystem::List()
 {
     Directory *directory = new Directory(NumDirEntries);
-
     directory->FetchFrom(directoryFile);
     directory->List();
     delete directory;

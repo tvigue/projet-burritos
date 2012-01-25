@@ -27,6 +27,24 @@
 #include "system.h"
 #include "filehdr.h"
 
+#ifdef CHANGED
+void FileHeader::setdatasector(int i,int sector){
+	dataSectors[i]=sector;
+}
+
+int FileHeader::getdatasector(int i){
+	return dataSectors[i];
+}
+
+int FileHeader::getsize(){
+	return numBytes;
+}
+
+void FileHeader::setsize(int i){
+	numBytes=i;
+}
+#endif
+
 //----------------------------------------------------------------------
 // FileHeader::Allocate
 // 	Initialize a fresh file header for a newly created file.
@@ -47,7 +65,7 @@ FileHeader::Allocate(BitMap *freeMap, int fileSize)
 	return FALSE;		// not enough space
 
     for (int i = 0; i < numSectors; i++)
-	dataSectors[i] = freeMap->Find();
+		dataSectors[i] = freeMap->Find();
     return TRUE;
 }
 
