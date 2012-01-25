@@ -121,10 +121,10 @@ MailBox::Put(PacketHeader pktHdr, MailHeader mailHdr, char *data)
 void 
 MailBox::Get(PacketHeader *pktHdr, MailHeader *mailHdr, char *data) 
 { 
+
     DEBUG('n', "Waiting for mail in mailbox\n");
     Mail *mail = (Mail *) messages->Remove();	// remove message from list;
 						// will wait if list is empty
-
     *pktHdr = mail->pktHdr;
     *mailHdr = mail->mailHdr;
     if (DebugIsEnabled('n')) {
@@ -146,9 +146,13 @@ MailBox::Get(PacketHeader *pktHdr, MailHeader *mailHdr, char *data)
 //
 //	"arg" -- pointer to the Post Office managing the Network
 //----------------------------------------------------------------------
-
+#ifdef CHANGED
+static void PostalHelper(Argument* arg) 
+{ PostOffice* po = (PostOffice *) arg->getFunction();; po->PostalDelivery(); }
+#else 
 static void PostalHelper(int arg)
 { PostOffice* po = (PostOffice *) arg; po->PostalDelivery(); }
+#endif //CHANGED
 static void ReadAvail(int arg)
 { PostOffice* po = (PostOffice *) arg; po->IncomingPacket(); }
 static void WriteDone(int arg)
@@ -172,9 +176,10 @@ static void WriteDone(int arg)
 //	  delivers any packets)
 //	"nBoxes" is the number of mail boxes in this Post Office
 //----------------------------------------------------------------------
-
+ 
 PostOffice::PostOffice(NetworkAddress addr, double reliability, int nBoxes)
 {
+
 // First, initialize the synchronization with the interrupt handlers
     messageAvailable = new Semaphore("message available", 0);
     messageSent = new Semaphore("message sent", 0);
@@ -191,10 +196,16 @@ PostOffice::PostOffice(NetworkAddress addr, double reliability, int nBoxes)
 
 // Finally, create a thread whose sole job is to wait for incoming messages,
 //   and put them in the right mailbox. 
+	#ifdef CHANGED
     Thread *t = new Thread("postal worker");
-
+	Argument * argu = new Argument((int)this,0);
+    t->Fork(PostalHelper, argu);
+    #else
+    Thread *t = new Thread("postal worker");
     t->Fork(PostalHelper, (int) this);
+    #endif //CHANGED
 }
+
 
 //----------------------------------------------------------------------
 // PostOffice::~PostOffice
@@ -263,7 +274,6 @@ PostOffice::Send(PacketHeader pktHdr, MailHeader mailHdr, const char* data)
 {
     char* buffer = new char[MaxPacketSize];	// space to hold concatenated
 						// mailHdr + data
-
     if (DebugIsEnabled('n')) {
 	printf("Post send: ");
 	PrintHeader(pktHdr, mailHdr);
@@ -285,7 +295,6 @@ PostOffice::Send(PacketHeader pktHdr, MailHeader mailHdr, const char* data)
     messageSent->P();			// wait for interrupt to tell us
 					// ok to send the next message
     sendLock->Release();
-
     delete [] buffer;			// we've sent the message, so
 					// we can delete our buffer
 }

@@ -76,6 +76,7 @@ class Directory {
 	#ifdef CHANGED
 	bool isFile(const char *name);
     bool AddDir(const char *name, int newSector);
+    char * FindName(int sector);
 	#endif
 
   private:

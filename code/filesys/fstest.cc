@@ -182,4 +182,3 @@ PerformanceTest()
     }
     stats->Print();
 }
-

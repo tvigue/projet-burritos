@@ -76,8 +76,11 @@ class FileSystem {
 
     bool Create(const char *name, int initialSize);  	
 					// Create a file (UNIX creat)
+	#ifdef CHANGED
+	void PrintCurrentDirectory();
 	bool CreateDir(const char *name, int initialSize);
 	bool ChangeDir(const char *name);
+	#endif //CHANGED
 
     OpenFile* Open(const char *name); 	// Open a file (UNIX open)
 
