@@ -221,7 +221,6 @@ FileSystem::Create(const char *name, int initialSize)
 
 #ifdef CHANGED
 bool FileSystem::ChangeDir(const char *name){
-	FileHeader *hdr;
 	Directory *directory;
     int sector;
 	bool success;
@@ -233,16 +232,14 @@ bool FileSystem::ChangeDir(const char *name){
 	sector = directory->Find(name);
     
     if(sector != -1){ //find the name
-    	hdr = new FileHeader;
-    	hdr->FetchFrom(sector);
-    	if(hdr->getsize() < 0 ){ //is dir
+    	
+    	if( !directory->isFile(name) ){ //is dir
     		//delete directoryFile;
     		directoryFile = Open(name);
     		currentdir=sector;
     	}else{
     		success=FALSE;
     	}
-    	delete hdr;
     }else{
     	success=FALSE;
     }
@@ -297,7 +294,7 @@ FileSystem::CreateDir(const char *name, int initialSize)
         sector = freeMap->Find();	// find a sector to hold the file header
     	if (sector == -1) 		
             success = FALSE;		// no free block for file header 
-        else if (!directory->Add(name, sector))
+        else if (!directory->AddDir(name, sector))
             success = FALSE;	// no space in directory
 		else {
     	    hdr = new FileHeader;
@@ -306,12 +303,12 @@ FileSystem::CreateDir(const char *name, int initialSize)
 	    	else {	
 	    		success = TRUE;
 				
-				hdr->setsize(initialSize); //-1
+				//hdr->setsize(initialSize); //-1
 
 				newdirfile = new OpenFile(sector);
 				newdirectory = new Directory(NumDirEntries);
-				newdirectory->Add(".", sector);
-				newdirectory->Add("..", currentdir);
+				newdirectory->AddDir(".", sector);
+				newdirectory->AddDir("..", currentdir);
 				newdirectory->WriteBack(newdirfile);
 				
 				

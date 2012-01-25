@@ -134,6 +134,9 @@ Directory::Add(const char *name, int newSector)
 
     for (int i = 0; i < tableSize; i++)
         if (!table[i].inUse) {
+        	#ifdef CHANGED
+        	table[i].isFile = TRUE;
+            #endif
             table[i].inUse = TRUE;
             strncpy(table[i].name, name, FileNameMaxLen); 
             table[i].sector = newSector;
@@ -142,6 +145,24 @@ Directory::Add(const char *name, int newSector)
     return FALSE;	// no space.  Fix when we have extensible files.
 }
 
+#ifdef CHANGED
+bool
+Directory::AddDir(const char *name, int newSector)
+{ 
+    if (FindIndex(name) != -1)
+	return FALSE;
+
+    for (int i = 0; i < tableSize; i++)
+        if (!table[i].inUse) {
+        	table[i].isFile=FALSE;
+            table[i].inUse = TRUE;
+            strncpy(table[i].name, name, FileNameMaxLen); 
+            table[i].sector = newSector;
+        return TRUE;
+	}
+    return FALSE;	// no space.  Fix when we have extensible files.
+}
+#endif
 //----------------------------------------------------------------------
 // Directory::Remove
 // 	Remove a file name from the directory.  Return TRUE if successful;
@@ -195,3 +216,10 @@ Directory::Print()
     printf("\n");
     delete hdr;
 }
+
+#ifdef CHANGED
+bool Directory::isFile(const char*name){
+	return table[FindIndex(name)].isFile;
+}
+#endif
+
