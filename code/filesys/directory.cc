@@ -162,6 +162,17 @@ Directory::AddDir(const char *name, int newSector)
 	}
     return FALSE;	// no space.  Fix when we have extensible files.
 }
+
+char * Directory::FindName(int sector){
+	char * name = new char[FileNameMaxLen + 1];
+	
+	for (int i = 0; i < tableSize; i++){
+        if (table[i].sector == sector) {
+            strncpy(name,table[i].name, FileNameMaxLen); 
+        }
+	}
+	return name;
+}
 #endif
 //----------------------------------------------------------------------
 // Directory::Remove

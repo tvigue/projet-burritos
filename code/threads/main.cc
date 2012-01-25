@@ -163,6 +163,12 @@ main (int argc, char **argv)
 		fileSystem->CreateDir(*(argv + 1),-1);
 		argCount = 2;
 	    }
+	  else if (!strcmp (*argv, "-pwd"))
+	    {
+		ASSERT (argc > 0 );
+		fileSystem->PrintCurrentDirectory();
+		argCount = 1;
+	    }
 	 #endif //CHANGED
 	  else if (!strcmp (*argv, "-p"))
 	    {			// print a Nachos file
