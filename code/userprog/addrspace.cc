@@ -125,6 +125,7 @@ AddrSpace::AddrSpace (OpenFile * executable)
     size = numPages * PageSize;
     
 #ifdef CHANGED
+	//printf("compare page %i <= %i\n",(int) numPages, FP->NumAvailFrame());
 	map=NULL;
     if((int)numPages<=FP->NumAvailFrame()){
 	    DEBUG ('a', "Initializing address space, num pages %d, size %d\n",

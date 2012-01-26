@@ -51,14 +51,13 @@ static void StartUserProcess(Argument * f){
 	OpenFile *executable = fileSystem->Open (buf);
     AddrSpace *space;
 
-    if (executable == NULL)
-      {
+    if (executable == NULL){
 		DEBUG('t',"Unable to open file %s\n",buf);
 		currentThread->space=NULL;
 		mutex->Release();
 		do_UserProcessusExit();
-	  return;
-      }
+	  	return;
+	}
     space = new AddrSpace (executable);
     if(space->getBitmap()!=NULL){//if not enough space the bitmap is not allocated
 		currentThread->space = space;

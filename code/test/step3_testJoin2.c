@@ -2,15 +2,12 @@
 
 // test du UserThreadJoin
 
-// Dans ce test il n'y a plus d'appel à UserThreadExit()
-// ni l'appel à UserThreadWait()
-
-int n;
+int thID;
 int arg=0;
 
 void function6(void * a){
 	arg++;
-	PutString("thread n°");
+	PutString("thread n ");
 	PutInt((int) a);
 	PutString(" fini!\n");
 }
@@ -18,9 +15,9 @@ void function6(void * a){
 //fonction qui creee un thread et l'attend
 void function5(void * a){
 	arg++;
-	n=UserThreadCreate(function6,(void *)arg);
-	UserThreadJoin(n);
-	PutString("thread n°");
+	thID=UserThreadCreate(function6,(void *)arg);
+	UserThreadJoin(thID);
+	PutString("thread n ");
 	PutInt((int) a);
 	PutString(" fini!\n");
 }
@@ -28,9 +25,9 @@ void function5(void * a){
 //fonction qui creee un thread et l'attend
 void function4(void * a){
 	arg++;
-	n=UserThreadCreate(function5,(void *)arg);
-	UserThreadJoin(n);
-	PutString("thread n°");
+	thID=UserThreadCreate(function5,(void *)arg);
+	UserThreadJoin(thID);
+	PutString("thread n ");
 	PutInt((int) a);
 	PutString(" fini!\n");
 }
@@ -38,9 +35,9 @@ void function4(void * a){
 //fonction qui creee un thread et l'attend
 void function3(void * a){
 	arg++;
-	n=UserThreadCreate(function4,(void *)arg);
-	UserThreadJoin(n);
-	PutString("thread n°");
+	thID=UserThreadCreate(function4,(void *)arg);
+	UserThreadJoin(thID);
+	PutString("thread n ");
 	PutInt((int) a);
 	PutString(" fini!\n");
 }
@@ -48,7 +45,7 @@ void function3(void * a){
 int main(){
 	
 	PutString("test2:\n");
-	PutString("Chaque thread cree attend le suivant:\n");
+	PutString("Chaque thread créé attend le suivant:\n");
 	arg=0;
 	UserThreadCreate(function3,(void *)arg);
 	
