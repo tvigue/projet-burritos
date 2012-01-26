@@ -36,7 +36,7 @@ Machine::Run()
   Instruction the_instr;
   Instruction *instr = &the_instr;
   // End of Modification
-
+	
     if(DebugIsEnabled('m'))
 
     // LB: Update the print format after the promotion of tick types
