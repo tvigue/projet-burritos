@@ -1,8 +1,6 @@
 #include "syscall.h"
 
-void print(char c, int n){
-
-}
+// test PutChar
 
 int main(){
 	PutChar('5');

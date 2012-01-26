@@ -20,7 +20,7 @@
 #include "synch.h"
 #endif
 
-#define UserStackSize		2048	// increase this as necessary!
+#define UserStackSize		5120	// increase this as necessary!
 
 class AddrSpace
 {

@@ -1,16 +1,13 @@
 #include "syscall.h"
 
 void function (void * a){
-	PutString("coucou je suis le thread 1\n");
+	PutString("je suis le thread crée!\n");
 	PutChar('\n');
 }
 
 int main(){
-	//int i;
 	int arg=5;
 	UserThreadCreate(function,&arg);
-	PutChar('E');
-	PutChar('\n');
-	PutString("salut ça va\n");
+	PutString("fin du test makethreads\n");
 	Exit(0);
 }

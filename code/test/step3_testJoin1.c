@@ -2,41 +2,41 @@
 
 // test du UserThreadJoin
 
-// Dans ce test il n'y a plus d'appel à UserThreadExit()
-// ni l'appel à UserThreadWait()
-
-int n;
+int ThID;
 int arg=0;
 int T[10];
 
 void function2(void * a){
-	PutString("Je suis le thread n°");
+	PutString("Je suis le thread n ");
 	PutInt((int) a);
 }	
 
 // fonction qui fait un join sur plusieurs autres threads
 void function1(void * a){
 	int i;
-	PutString("Je suis le thread n°");
+	PutString("Je suis le thread n ");
 	PutInt((int) a);
 	for(i=0;i<10;i++){
 		arg++;
-		n=UserThreadCreate(function2,(void *)arg);
-		T[i]=n;
+		ThID=UserThreadCreate(function2,(void *)arg);
+		T[i]=ThID;
 	}
 	for(i=0;i<10;i++){
 		if(T[i]!=-1){
 			UserThreadJoin(T[i]);
 		}
 	}
+	PutString("\n");
 	PutString("fin fonction 1\n");
 }
 
 int main(){
 	PutString("test1:\n");
-	PutString("creation d'un thread qui en attend plusieurs :\n");
-	UserThreadCreate(function1,(void *)arg);
-	PutString("fin du test1\n");
+	PutString("création d'un thread");
+	PutString(" qui va en attendre plusieurs:\n");
+	ThID=UserThreadCreate(function1,(void *)arg);
+	UserThreadJoin(ThID);
+	PutString("fin du testJoin1\n");
 	
 	Exit(0);
 }
