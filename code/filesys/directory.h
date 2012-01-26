@@ -74,6 +74,7 @@ class Directory {
 					//  of the directory -- all the file
 					//  names and their contents.
 	#ifdef CHANGED
+	bool Empty();
 	bool isFile(const char *name);
     bool AddDir(const char *name, int newSector);
     char * FindName(int sector);

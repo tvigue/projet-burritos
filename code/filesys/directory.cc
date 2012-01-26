@@ -146,6 +146,21 @@ Directory::Add(const char *name, int newSector)
 }
 
 #ifdef CHANGED
+
+bool
+Directory::Empty()
+{ 
+	int n=0;
+	for(int j=0;j<10;j++)
+		if(table[j].inUse)
+			n++;
+	if(n == 2)
+    	return TRUE;
+    else
+    	return FALSE;	
+}
+
+
 bool
 Directory::AddDir(const char *name, int newSector)
 { 

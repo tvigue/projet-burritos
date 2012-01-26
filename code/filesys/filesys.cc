@@ -421,6 +421,10 @@ bool
 FileSystem::Remove(const char *name)
 { 
     Directory *directory;
+    #ifdef CHANGED
+    Directory *newdir;
+    OpenFile *newfile;
+    #endif
     BitMap *freeMap;
     FileHeader *fileHdr;
     int sector;
@@ -432,23 +436,45 @@ FileSystem::Remove(const char *name)
        delete directory;
        return FALSE;			 // file not found 
     }
+    
     fileHdr = new FileHeader;
-    fileHdr->FetchFrom(sector);
-
+	fileHdr->FetchFrom(sector);
     freeMap = new BitMap(NumSectors);
-    freeMap->FetchFrom(freeMapFile);
+	freeMap->FetchFrom(freeMapFile);
+	#ifdef CHANGED
+    if(!directory->isFile(name)){
+    	newdir = new Directory(NumDirEntries);
+		newfile = new OpenFile(sector);
+		newdir->FetchFrom(newfile);
+		if(newdir->Empty()){
+			fileHdr->Deallocate(freeMap);  		// remove data blocks
+			freeMap->Clear(sector);			// remove header block
+			directory->Remove(name);
+			freeMap->WriteBack(freeMapFile);		// flush to disk
+			directory->WriteBack(directoryFile);        // flush to disk
+		}else{
+			delete newdir;
+			delete newfile;
+			return FALSE;
+		}
+    }else{ //fichier
+	#endif
+		fileHdr->Deallocate(freeMap);  		// remove data blocks
+		freeMap->Clear(sector);			// remove header block
+		directory->Remove(name);
 
-    fileHdr->Deallocate(freeMap);  		// remove data blocks
-    freeMap->Clear(sector);			// remove header block
-    directory->Remove(name);
-
-    freeMap->WriteBack(freeMapFile);		// flush to disk
-    directory->WriteBack(directoryFile);        // flush to disk
+		freeMap->WriteBack(freeMapFile);		// flush to disk
+		directory->WriteBack(directoryFile);        // flush to disk
+	#ifdef CHANGED
+	}
+	delete newdir;
+	delete newfile;
+	#endif
     delete fileHdr;
     delete directory;
     delete freeMap;
     return TRUE;
-} 
+}
 
 //----------------------------------------------------------------------
 // FileSystem::List
