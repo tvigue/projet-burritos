@@ -86,7 +86,6 @@ void ExceptionHandler(ExceptionType which) {
     #else
     int adr = 0;
     int adr2 = 0;
-    //int codeExit;
     char buf[MAX_STRING_SIZE];
     char ch;
     int n = 0;
@@ -213,7 +212,6 @@ void ExceptionHandler(ExceptionType which) {
 	 		
 	 		case SC_Exit: {
 	 			mutex->Acquire();
-	 			//codeExit  = machine->ReadRegister(4);
 				DEBUG('a', "Shutdown, initiated by user program.\n");
 				DEBUG('t', "Wait users threads.\n");
 				do_UserThreadWait();
