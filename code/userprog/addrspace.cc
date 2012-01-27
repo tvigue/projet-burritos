@@ -36,13 +36,9 @@ static void ReadAtVirtual(OpenFile *executable, int virtualaddr,
 	int page = virtualaddr / PageSize;
 	int low = virtualaddr & (PageSize -1);
 	
-	//printf("page :%i\n",page);
-	//printf("low :%i\n",low);
-	
 	//read beggining
 	if(low != 0){
 		executable->ReadAt(buf,PageSize-low,position);
-		//printf("page physique: %i\n",pageTable[page].physicalPage);
 		for(i=low;i<PageSize;i++)
 			machine->WriteMem(page*PageSize+i,1,(int)buf[i-low]);
 		page++;
@@ -51,7 +47,6 @@ static void ReadAtVirtual(OpenFile *executable, int virtualaddr,
 	}
 	//read entire page
 	while(numBytes > PageSize){
-		//printf("page physique: %i\n",pageTable[page].physicalPage);
 		executable->ReadAt(buf,PageSize,position);
 		for(i=0;i<PageSize;i++)
 			machine->WriteMem(page*PageSize+i,1,(int)buf[i]);
@@ -61,7 +56,6 @@ static void ReadAtVirtual(OpenFile *executable, int virtualaddr,
 	}
 	//read the remain
 	if(numBytes != 0){
-		//printf("page physique: %i\n",pageTable[page].physicalPage);
 		executable->ReadAt(buf,numBytes,position);
 		for(i=0;i<numBytes;i++)
 			machine->WriteMem(page*PageSize+i,1,(int)buf[i]);
@@ -125,7 +119,6 @@ AddrSpace::AddrSpace (OpenFile * executable)
     size = numPages * PageSize;
     
 #ifdef CHANGED
-	//printf("compare page %i <= %i\n",(int) numPages, FP->NumAvailFrame());
 	map=NULL;
     if((int)numPages<=FP->NumAvailFrame()){
 	    DEBUG ('a', "Initializing address space, num pages %d, size %d\n",
@@ -133,7 +126,6 @@ AddrSpace::AddrSpace (OpenFile * executable)
 		// first, set up the translation 
 	    pageTable = new TranslationEntry[numPages];
 	    int numpage;
-	    //printf("Page Table Adr %x\n",(int)pageTable);
 	    for (i = 0; i < numPages; i++){
 	  		pageTable[i].virtualPage = i;
 	  		numpage=FP->GetEmptyFrame();
@@ -223,7 +215,6 @@ AddrSpace::AddrSpace (OpenFile * executable)
 		#endif
 	}
 #endif  
-     
 
 }
 
@@ -262,7 +253,7 @@ AddrSpace::~AddrSpace ()
   // End of modification
 }
 
-//------------------&----------------------------------------------------
+//----------------------------------------------------------------------
 // AddrSpace::InitRegisters
 //      Set the initial values for the user-level register set.
 //

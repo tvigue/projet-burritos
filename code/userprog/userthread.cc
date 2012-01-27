@@ -20,7 +20,6 @@ static Lock * mutex;
 
 static void StartUserThread(Argument * f){
 	int i;
-	//int argument = 0;
 
     for (i = 0; i < NumTotalRegs; i++)
 		machine->WriteRegister (i, 0);
